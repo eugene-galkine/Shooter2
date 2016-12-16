@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
 
+import eg.game.world.objects.player.Weapon;
 import eg.server.Server;
 import eg.server.world.ServerWorld.MsgType;
 
@@ -20,7 +21,9 @@ public class ServerPlayer
 	private byte[] sendData;
 	private DatagramSocket clientSocket;
 	//private long lastUpdated;
-	private int x, y, rot, weaponID, shootRot;
+	private int x, y, rot, weaponID, shootRot, health, killer;
+	private volatile boolean dead;
+	private Object lockObj;
 	
 	public ServerPlayer(Socket inSocket, int inID)
 	{
@@ -32,6 +35,10 @@ public class ServerPlayer
 		this.y = 348;
 		this.rot = 0;
 		this.weaponID = 0;
+		this.health = 100;
+		this.killer = -1;
+		this.dead = false;
+		this.lockObj = new Object();
 		
 		try 
 		{
@@ -49,23 +56,43 @@ public class ServerPlayer
 		}
 	}
 	
+	/*
+	 * query functions
+	 */
+	
 	public int getID()
 	{
 		return id;
 	}
 	
-	public void close() 
+	public int getX() 
 	{
-		try
-		{
-			outToClient.close();
-			clientSocket.close();
-			socket.close();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		return x;
 	}
+	
+	public int getY() 
+	{
+		return y;
+	}
+	
+	public int getRot() 
+	{
+		return rot;
+	}
+
+	public int getShootRot() 
+	{
+		return shootRot;
+	}
+	
+	public int getWeaponID()
+	{
+		return weaponID;
+	}
+	
+	/*
+	 * net event functions
+	 */
 	
 	private void updatePlayerPos(String substring) 
 	{
@@ -100,6 +127,62 @@ public class ServerPlayer
 		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
 	}
 	
+	private void hitBullet(String substring) 
+	{
+		int bulletID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		substring = substring.substring(substring.indexOf(',') + 1);
+		int weaponID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		int damage = Weapon.getFromID(weaponID).getDamage();
+		
+		health -= damage;
+		if (health <= 0)
+		{
+			killer = bulletID;
+			new Thread(new Runnable() 
+			{
+				@Override
+				public void run() 
+				{
+					//TODO some anti cheat here
+					
+					while (!dead)
+					{
+						try 
+						{
+							synchronized (lockObj)
+							{
+								lockObj.wait();
+							}
+						} catch (InterruptedException e) {}
+					}
+					
+					respawn();
+				}
+			}).start();
+		}
+	}
+	
+	private void die()
+	{
+		dead = true;
+		synchronized (lockObj)
+		{
+			lockObj.notify();
+		}
+	}
+	
+	private void respawn()
+	{
+		health = 100;
+		dead = false;
+		System.out.println("respawn");
+		//TODO this part
+	}
+	
+	/*
+	 * network functions
+	 */
+	
 	void sendTCPMessage(String in) 
 	{
 		try 
@@ -128,8 +211,20 @@ public class ServerPlayer
 	
 	public void receiveTCPMessage(String in) 
 	{
-		// TODO Auto-generated method stub
-		System.out.println(in);
+		try
+		{
+			if (in.startsWith("HIT"))
+			{
+				hitBullet(in.substring(in.indexOf('|') + 1));
+			} else if (in.startsWith("DEAD"))
+			{
+				die();
+			}
+		} catch (Exception e)
+		{
+			System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
+			//don't crash
+		}
 	}
 	
 	public void receiveUDPMessage(String in) 
@@ -145,33 +240,21 @@ public class ServerPlayer
 			}
 		} catch (Exception e)
 		{
-			System.out.println("messsage from client " + id + " caused error.\n msg: " + in);
+			System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
 	}
-
-	public int getX() 
-	{
-		return x;
-	}
 	
-	public int getY() 
+	public void close() 
 	{
-		return y;
-	}
-	
-	public int getRot() 
-	{
-		return rot;
-	}
-
-	public int getShootRot() 
-	{
-		return shootRot;
-	}
-	
-	public int getWeaponID()
-	{
-		return weaponID;
+		try
+		{
+			outToClient.close();
+			clientSocket.close();
+			socket.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

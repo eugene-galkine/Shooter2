@@ -11,7 +11,7 @@ public class Player extends Person implements EventHandler<Event>
 {	
 	private float movX, movY;
 	private boolean movLeft, movRight, movUp, movDown, isShooting;
-	private int movSpeed = 25;
+	private int movSpeed = 25, health;
 	private Weapon weapon;
 	
 	public Player(int x, int y)
@@ -27,6 +27,7 @@ public class Player extends Person implements EventHandler<Event>
 		//set my weapon
 		weapon = Weapon.pistol;
 		isShooting = false;
+		health = 100;
 	}
 
 	@Override
@@ -175,5 +176,15 @@ public class Player extends Person implements EventHandler<Event>
 	private void shoot()
 	{
 		weapon.shoot(x+IMG_WIDTH/2,y+IMG_HEIGHT/2,rot,World.getClient().getID());
+	}
+
+	public void hit(int weaponID) 
+	{
+		health -= Weapon.getFromID(weaponID).getDamage();
+		
+		if (health <= 0)
+		{
+			World.getClient().dead();
+		}
 	}
 }

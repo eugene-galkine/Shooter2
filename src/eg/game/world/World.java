@@ -150,13 +150,14 @@ public class World
 		for (NetPlayer player : netPlayers)
 			if (player != null && player.getID() != ownerID && player.getBounds().intersects(bulletBounds))
 			{
-				getClient().bulletHit(player.getID(), ownerID, weaponID);
+				//getClient().bulletHit(player.getID(), ownerID, weaponID);
 				return true;
 			}
 		
 		//is it hitting this player and not our own bullet?
 		if (ourPlayer != null && ownerID != client.getID() && ourPlayer.getBounds().intersects(bulletBounds))
 		{
+			ourPlayer.hit(weaponID);
 			getClient().bulletHit(getClient().getID(), ownerID, weaponID);
 			return true;
 		}

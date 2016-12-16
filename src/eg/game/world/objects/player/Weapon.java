@@ -7,7 +7,7 @@ import eg.game.world.objects.Bullet;
 
 public class Weapon 
 {
-	public static final Weapon pistol = new Weapon("pistol", 0, false, 100, 6, 100);
+	public static final Weapon pistol = new Weapon("pistol", 0, 10, false, 100, 6, 100);
 	
 	private static final Weapon list[] =
 		{
@@ -29,11 +29,12 @@ public class Weapon
 	private final int inaccuracy;
 	private final int weaponID;
 	private final float bulletSpeed;
+	private final int damage;
 	
 	private long shootTimer;
 	private Random r;
 	
-	private Weapon(String name, int weaponID, boolean auto, int delay, int inaccuracy, int bulletSpeed)
+	private Weapon(String name, int weaponID, int damage, boolean auto, int delay, int inaccuracy, int bulletSpeed)
 	{
 		this.name = name;
 		this.automatic = auto;
@@ -41,6 +42,7 @@ public class Weapon
 		this.inaccuracy = inaccuracy;
 		this.weaponID = weaponID;
 		this.bulletSpeed = bulletSpeed;
+		this.damage = damage;
 		
 		shootTimer = 0;
 		r = new Random();
@@ -54,6 +56,11 @@ public class Weapon
 	private int getID() 
 	{
 		return weaponID;
+	}
+	
+	public int getDamage() 
+	{
+		return damage;
 	}
 	
 	public void shoot(float x, float y, float rot, int ID)

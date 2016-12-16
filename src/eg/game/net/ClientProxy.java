@@ -86,8 +86,13 @@ public class ClientProxy
 
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
 	{
-		client.sendTCPMessage("BHIT|"+ID+","+targetID+","+ownerID+","+weaponID);
+		client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
 		//System.out.println("player " + targetID + " took damage from " + ownerID + " (ClientProxy)");
+	}
+	
+	public void dead() 
+	{
+		client.sendTCPMessage("DEAD|,");
 	}
 	
 	public int getID() 
