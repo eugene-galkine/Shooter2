@@ -1,0 +1,142 @@
+package eg.server.world;
+
+import java.net.DatagramPacket;
+import java.net.Socket;
+
+public class ServerWorld 
+{
+	private static final int MAX_PLAYERS = 8;
+	
+	private ServerPlayer[] players;
+	private boolean[] playerIDs;
+	private int numPlayers;
+	
+	enum MsgType
+	{
+		NEW_PLAYER, //0
+		REMOVE_PLAYER, //1
+		UPDATE_POS, //2
+		SHOOT //3
+	}
+	
+	public ServerWorld()
+	{
+		players = new ServerPlayer[MAX_PLAYERS];
+		numPlayers = 0;
+		playerIDs = new boolean[MAX_PLAYERS];
+		
+		for (int i = 0; i < MAX_PLAYERS; i++)
+			playerIDs[i] = true;
+	}
+	
+	private int getNextID()
+	{
+		for (int i = 0; i < MAX_PLAYERS; i++)
+			if (playerIDs[i])
+			{
+				playerIDs[i] = false;
+				return i;
+			}
+		
+		return -1;
+	}
+	
+	public synchronized void removePlayer(ServerPlayer sp) 
+	{
+		if (sp == null)
+			return;
+		
+		System.out.println("removing player with id: " + sp.getID());
+		
+		//free the id
+		playerIDs[sp.getID()] = true;
+		//remove from list
+		players[sp.getID()] = null;
+		//close net sockets
+		sp.close();
+		
+		numPlayers--;
+		
+		//tell everyone else about it
+		sendToAll(MsgType.REMOVE_PLAYER, sp);
+	}
+	
+	public synchronized ServerPlayer addPlayer(Socket socket)
+	{
+		if (numPlayers < MAX_PLAYERS)
+		{
+			ServerPlayer sp = new ServerPlayer(socket, getNextID());
+			System.out.println("new player connected: " + socket.getLocalAddress() + " and was given id: " + sp.getID());
+			
+			//tell everyone someone has joined
+			sendToAll(MsgType.NEW_PLAYER, sp, true);
+			
+			//add player to list
+			players[sp.getID()] = sp;
+			
+			//send data about all players to new player
+			for (ServerPlayer player : players)
+				if (player != null && sp != player)
+					sendTo(MsgType.NEW_PLAYER, sp, player);
+			
+			numPlayers++;
+			
+			return sp;
+		} else
+		{
+			new ServerPlayer(socket, -1).close();
+			
+			return null;
+		}
+	}
+	
+	public void sendToAll(MsgType mt, ServerPlayer currentPlayer)
+	{
+		sendToAll(mt, currentPlayer, false);
+	}
+	
+	public synchronized void sendToAll(MsgType mt, ServerPlayer currentPlayer, boolean allButSelf)
+	{
+		for (ServerPlayer player : players)
+		{
+			if (player == null || (player == currentPlayer && allButSelf))
+				continue;
+			
+			sendTo(mt, player, currentPlayer);
+		}
+	}
+	
+	public void sendTo(MsgType mt, ServerPlayer player, ServerPlayer currentPlayer)
+	{
+		switch (mt)
+		{
+		case NEW_PLAYER:
+			player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
+			break;
+		case REMOVE_PLAYER:
+			player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
+			break;
+		case UPDATE_POS:
+			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+			break;
+		case SHOOT:
+			player.sendUDPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getShootRot()+",");
+			break;
+		}
+	}
+	
+	public void receiveUDPMessage(DatagramPacket receivePacket) 
+	{
+		String msg = new String(receivePacket.getData()).trim();
+		//System.out.println("NEW UDP MSG: " + msg);
+		
+		//get player ID from message
+		int index = msg.indexOf('|') + 1;
+		ServerPlayer player = players[Integer.parseInt(msg.substring(index, index + 1))];
+		
+		if (player == null)
+			throw new NullPointerException();
+		
+		player.receiveUDPMessage(msg);
+	}
+}
