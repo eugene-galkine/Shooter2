@@ -22,12 +22,14 @@ public class World
 	private NetPlayer netPlayers[];
 	private WorldUpdater updater;
 	private Player ourPlayer;
+	private Object playerLock;
 	//private Pane pane;
 	private WorldDrawer drawer;
 	
 	public World(GraphicsContext newgc, ClientProxy cp)
 	{
 		instance = this;
+		ourPlayer = null;
 		solidObjects = new LinkedList<ICollidable>();
 		updater = new WorldUpdater();
 		client = cp;
@@ -67,7 +69,16 @@ public class World
 		
 		//this is the player
 		if (obj instanceof Player)
+		{
+			if (playerLock == null)
+				playerLock = new Object();
+			
 			ourPlayer = (Player)obj;
+			synchronized (playerLock)
+			{
+				playerLock.notify();
+			}
+		}
 	}
 	
 	public void removeObject(Object obj)
@@ -167,6 +178,34 @@ public class World
 
 	public void spawnPlayer(int x, int y, int health) 
 	{
-		ourPlayer.spawn(x,y,health);
+		//spawn player if he exists
+		if (ourPlayer != null)
+			ourPlayer.spawn(x,y,health);
+		else
+		{
+			//wait for the player to exist and then spawn him
+			new Thread(new Runnable() 
+			{
+				@Override
+				public void run() 
+				{
+					//initiate the lock object if it needs to be (will always need to be unless I add something else that used this object)
+					if (playerLock == null)
+						playerLock = new Object();
+						
+					while (ourPlayer == null)
+						try 
+						{
+							synchronized (playerLock)
+							{
+								playerLock.wait();
+							}
+						} catch (InterruptedException e) {}
+					
+					//finally spawn when ready
+					ourPlayer.spawn(x,y,health);
+				}
+			}).start();
+		}
 	}
 }

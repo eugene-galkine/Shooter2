@@ -75,6 +75,8 @@ public class ServerWorld
 			//add player to list
 			players[sp.getID()] = sp;
 			
+			sp.respawn();
+			
 			//send data about all players to new player
 			for (ServerPlayer player : players)
 				if (player != null && sp != player)

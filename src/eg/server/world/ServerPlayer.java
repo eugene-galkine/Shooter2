@@ -178,7 +178,7 @@ public class ServerPlayer
 		}
 	}
 	
-	private void respawn()
+	void respawn()
 	{
 		health = 100;
 		dead = false;
