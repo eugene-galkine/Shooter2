@@ -187,4 +187,14 @@ public class Player extends Person implements EventHandler<Event>
 			World.getClient().dead();
 		}
 	}
+
+	public void spawn(int x, int y, int health) 
+	{
+		this.x = x;
+		this.y = y;
+		this.health = health;
+		
+		bounds.setX(x + BOUND_SIZE_DIFF);
+		bounds.setY(y + BOUND_SIZE_DIFF);
+	}
 }

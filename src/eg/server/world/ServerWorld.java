@@ -16,7 +16,8 @@ public class ServerWorld
 		NEW_PLAYER, //0
 		REMOVE_PLAYER, //1
 		UPDATE_POS, //2
-		SHOOT //3
+		SHOOT, //3
+		SPAWN  //4
 	}
 	
 	public ServerWorld()
@@ -121,6 +122,13 @@ public class ServerWorld
 			break;
 		case SHOOT:
 			player.sendUDPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getShootRot()+",");
+			break;
+		case SPAWN:
+			if (player != currentPlayer)
+				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+			else
+				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
+			
 			break;
 		}
 	}

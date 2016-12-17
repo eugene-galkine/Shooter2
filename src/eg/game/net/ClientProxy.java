@@ -23,12 +23,7 @@ public class ClientProxy
 	{
 		//a new message was received over tcp
 		System.out.println("message from server tcp: " + msg);
-		if (msg.startsWith("CONNECTED|"))
-		{
-			msg = msg.substring("CONNECTED|".length());
-			ID = Integer.parseInt(msg);
-			
-		} else if (msg.startsWith("NEW_PLAYER|"))
+		if (msg.startsWith("NEW_PLAYER|"))
 		{
 			msg = msg.substring("NEW_PLAYER|".length());
 			World.getInstance().newPlayer(Integer.parseInt(msg));
@@ -38,9 +33,27 @@ public class ClientProxy
 			msg = msg.substring("REMOVE_PLAYER|".length());
 			World.getInstance().removePlayer(Integer.parseInt(msg));
 			
+		} else if (msg.startsWith("SPAWN"))
+		{
+			msg = msg.substring("SPAWN|".length());
+			int x = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int y = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int health = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			
+			World.getInstance().spawnPlayer(x,y,health);
+			
 		} else if (msg.startsWith("REJECTED"))
 		{
 			System.out.println("Server rejected connection");
+			//TODO rejected connection from server
+			
+		} else if (msg.startsWith("CONNECTED|"))
+		{
+			msg = msg.substring("CONNECTED|".length());
+			ID = Integer.parseInt(msg);
+			
 		}
 	}
 	

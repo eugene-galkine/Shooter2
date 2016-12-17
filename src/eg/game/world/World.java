@@ -164,4 +164,9 @@ public class World
 		else
 			return false;
 	}
+
+	public void spawnPlayer(int x, int y, int health) 
+	{
+		ourPlayer.spawn(x,y,health);
+	}
 }

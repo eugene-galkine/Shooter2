@@ -90,6 +90,11 @@ public class ServerPlayer
 		return weaponID;
 	}
 	
+	public int getHealth() 
+	{
+		return health;
+	}
+	
 	/*
 	 * net event functions
 	 */
@@ -138,12 +143,14 @@ public class ServerPlayer
 		if (health <= 0)
 		{
 			killer = bulletID;
+			
+			//wait until we are confirmed dead by client to respawn
 			new Thread(new Runnable() 
 			{
 				@Override
 				public void run() 
 				{
-					//TODO some anti cheat here
+					//TODO better anti cheat
 					
 					while (!dead)
 					{
@@ -175,8 +182,9 @@ public class ServerPlayer
 	{
 		health = 100;
 		dead = false;
-		System.out.println("respawn");
-		//TODO this part
+		x = 100;
+		y = 100;
+		Server.getWorld().sendToAll(MsgType.SPAWN, this);
 	}
 	
 	/*
