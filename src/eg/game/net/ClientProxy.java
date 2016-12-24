@@ -1,6 +1,6 @@
 package eg.game.net;
 
-import eg.game.world.World;
+import eg.game.state.MPShooter.GameWorld;
 
 public class ClientProxy 
 {
@@ -26,12 +26,12 @@ public class ClientProxy
 		if (msg.startsWith("NEW_PLAYER|"))
 		{
 			msg = msg.substring("NEW_PLAYER|".length());
-			World.getInstance().newPlayer(Integer.parseInt(msg));
+			GameWorld.getInstance().newPlayer(Integer.parseInt(msg));
 			
 		} else if (msg.startsWith("REMOVE_PLAYER|"))
 		{
 			msg = msg.substring("REMOVE_PLAYER|".length());
-			World.getInstance().removePlayer(Integer.parseInt(msg));
+			GameWorld.getInstance().removePlayer(Integer.parseInt(msg));
 			
 		} else if (msg.startsWith("SPAWN"))
 		{
@@ -42,7 +42,7 @@ public class ClientProxy
 			msg = msg.substring(msg.indexOf(',') + 1);
 			int health = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			
-			World.getInstance().spawnPlayer(x,y,health);
+			GameWorld.getInstance().spawnPlayer(x,y,health);
 			
 		} else if (msg.startsWith("REJECTED"))
 		{
@@ -75,7 +75,7 @@ public class ClientProxy
 			msg = msg.substring(msg.indexOf(',') + 1);
 			int rot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			
-			World.getInstance().updatePlayer(id, x, y, rot);
+			GameWorld.getInstance().updatePlayer(id, x, y, rot);
 		} else if (msg.startsWith("SHOOT|"))
 		{
 			msg = msg.substring("SHOOT|".length());
@@ -83,7 +83,7 @@ public class ClientProxy
 			msg = msg.substring(msg.indexOf(',') + 1);
 			int shootRot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			
-			World.getInstance().netShoot(id, shootRot);
+			GameWorld.getInstance().netShoot(id, shootRot);
 		}
 	}
 	

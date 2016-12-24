@@ -4,17 +4,17 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import eg.game.Main;
 import eg.game.net.ClientFactory;
-import eg.game.world.World;
+import eg.game.state.MPShooter.GameWorld;
 import eg.game.world.objects.Wall;
 import eg.game.world.objects.player.Player;
 
-public class Game extends State
+public class MpShooter extends State
 {
-	public Game(GraphicsContext gc, Scene newScene, Main newParent)
+	public MpShooter(GraphicsContext gc, Scene newScene, Main newParent)
 	{
 		super(gc, newScene, newParent);
 		
-		new World(gc, ClientFactory.connectToServer("localhost", 1426));
+		new GameWorld(gc, ClientFactory.connectToServer("localhost", 1426));
 	}
 
 	@Override
@@ -31,9 +31,9 @@ public class Game extends State
 		scene.setOnKeyPressed(p);
 		scene.setOnKeyReleased(p);
 		
-		World.getInstance().addObject(p);
+		GameWorld.getInstance().addObject(p);
 		
-		World.getInstance().addObject(new Wall(10, 10));
-		World.getInstance().addObject(new Wall(26, 10));
+		GameWorld.getInstance().addObject(new Wall(10, 10));
+		GameWorld.getInstance().addObject(new Wall(26, 10));
 	}
 }

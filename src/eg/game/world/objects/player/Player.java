@@ -1,6 +1,6 @@
 package eg.game.world.objects.player;
 
-import eg.game.world.World;
+import eg.game.state.MPShooter.GameWorld;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
@@ -148,7 +148,7 @@ public class Player extends Person implements EventHandler<Event>
 		bounds.setX(x + BOUND_SIZE_DIFF);
 		
 		//check x collision
-		if (World.getInstance().checkCollision(bounds.getBoundsInParent()))
+		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()))
 			x = oldX;
 		
 		//update both x and y for collision box in case x was reverted
@@ -156,17 +156,17 @@ public class Player extends Person implements EventHandler<Event>
 		bounds.setY(y + BOUND_SIZE_DIFF);
 		
 		//check y collision
-		if (World.getInstance().checkCollision(bounds.getBoundsInParent()))
+		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()))
 			y = oldY;
 		
 		//reset y bounds
 		bounds.setY(y + BOUND_SIZE_DIFF);
 		
 		//tell server about our new position and rotation
-		World.getClient().updatePlayerPos((int)x, (int)y, (int)rot);
+		GameWorld.getClient().updatePlayerPos((int)x, (int)y, (int)rot);
 
 		//update the camera
-		World.getInstance().updateCamera(this);
+		GameWorld.getInstance().updateCamera(x, y);
 		
 		//shoot gun if needed
 		if (isShooting)
@@ -175,7 +175,7 @@ public class Player extends Person implements EventHandler<Event>
 	
 	private void shoot()
 	{
-		weapon.shoot(x+IMG_WIDTH/2,y+IMG_HEIGHT/2,rot,World.getClient().getID());
+		weapon.shoot(x+IMG_WIDTH/2,y+IMG_HEIGHT/2,rot,GameWorld.getClient().getID());
 	}
 
 	public void hit(int weaponID) 
@@ -184,7 +184,7 @@ public class Player extends Person implements EventHandler<Event>
 		
 		if (health <= 0)
 		{
-			World.getClient().dead();
+			GameWorld.getClient().dead();
 		}
 	}
 

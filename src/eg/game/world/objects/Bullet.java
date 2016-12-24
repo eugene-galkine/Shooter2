@@ -1,6 +1,6 @@
 package eg.game.world.objects;
 
-import eg.game.world.World;
+import eg.game.state.MPShooter.GameWorld;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
 import javafx.scene.image.Image;
@@ -76,16 +76,16 @@ public class Bullet extends IUpdatable implements IDrawable
 		
 		//remove bullet if it goes too far
 		if (x > 2000 || x < -2000 || y > 2000 || y < -2000)
-			World.getInstance().removeObject(this);
+			GameWorld.getInstance().removeObject(this);
 		
 		//check collision
 		r.setX(x);
 		r.setY(y);
-		if (World.getInstance().checkCollision(r.getBoundsInLocal()))
-			World.getInstance().removeObject(this);
+		if (GameWorld.getInstance().checkCollision(r.getBoundsInLocal()))
+			GameWorld.getInstance().removeObject(this);
 		
 		//TODO collision with players & fix concurrent in collision inside world
-		if (World.getInstance().bulletCollision(r.getBoundsInLocal(), ownerID, weaponID))
-			World.getInstance().removeObject(this);
+		if (GameWorld.getInstance().bulletCollision(r.getBoundsInLocal(), ownerID, weaponID))
+			GameWorld.getInstance().removeObject(this);
 	}
 }

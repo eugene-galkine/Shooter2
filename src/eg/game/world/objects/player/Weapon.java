@@ -2,7 +2,7 @@ package eg.game.world.objects.player;
 
 import java.util.Random;
 
-import eg.game.world.World;
+import eg.game.state.MPShooter.GameWorld;
 import eg.game.world.objects.Bullet;
 
 public class Weapon 
@@ -74,8 +74,8 @@ public class Weapon
 		
 		//shoot a bullet
 		Bullet b = new Bullet(x,y,weaponID,rot + (r.nextInt(inaccuracy) - (inaccuracy/2)),bulletSpeed, ID);
-		World.getInstance().addObject(b);
+		GameWorld.getInstance().addObject(b);
 		
-		World.getClient().shoot((int)b.getRot());
+		GameWorld.getClient().shoot((int)b.getRot());
 	}
 }

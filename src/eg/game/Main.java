@@ -39,7 +39,7 @@ public class Main extends Application
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		//TODO: changeState(new MainMenu(pane, scene, this));
-		changeState(new Game(gc, scene, this));
+		changeState(new MpShooter(gc, scene, this));
 	}
 	
 	public void changeState(State state)
