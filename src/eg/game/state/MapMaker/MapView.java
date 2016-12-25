@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 
 public class MapView extends IUpdatable implements EventHandler<Event>
 {
-	private float x, y, scrolX, scrolY;
+	private float x, y, scrolX, scrolY, mx, my;
 	
 	public MapView()
 	{
@@ -26,22 +26,22 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			switch (mouse.getEventType().getName())
 			{
 			case "MOUSE_DRAGGED":
-				x = -(int)mouse.getScreenX();
-				y = 800 - (int)mouse.getScreenY() - 1;
+				mx = -(int)mouse.getX();
+				my = 800 - (int)mouse.getY();
 				
 				if (mouse.getButton() == MouseButton.PRIMARY)
 				{
-					x -= scrolX - x;
-					y -= scrolY - y;
-					scrolX = x;
-					scrolY = y;
+					x -= scrolX - mx;
+					y -= scrolY - my;
+					scrolX = mx;
+					scrolY = my;
 				}
 					
 				break;
 			case "MOUSE_PRESSED":
 				if (mouse.getButton() == MouseButton.PRIMARY)
-					scrolX = x;
-					scrolY = y;
+					scrolX = -(int)mouse.getX();
+					scrolY = 800 - (int)mouse.getY();
 				break;
 			case "MOUSE_RELEASED":
 				break;
