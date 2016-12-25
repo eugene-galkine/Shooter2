@@ -62,7 +62,7 @@ public class WorldDrawer extends AnimationTimer
 							drawable.getX() + offX + (drawable.getImg().getWidth()/2), 
 							drawable.getY() + offY + (drawable.getImg().getHeight()/2));
 		        
-				gc.drawImage(drawable.getImg(), drawable.getX() + offX, drawable.getY() + offY);
+				gc.drawImage(drawable.getImg(), drawable.getX() + offX, drawable.getY() + offY, drawable.getWidth(), drawable.getHeight());
 				gc.restore();
 			}
 		}

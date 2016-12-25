@@ -62,7 +62,7 @@ public abstract class World
 	public void updateCamera(float x, float y)
 	{
 		//move camera over player
-		drawer.setOffset(348 - x, 348 - y);
+		drawer.setOffset(x, y);
 	}
 	
 	public boolean checkCollision(Bounds b)

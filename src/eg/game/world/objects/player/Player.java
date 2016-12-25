@@ -1,5 +1,6 @@
 package eg.game.world.objects.player;
 
+import eg.game.Main;
 import eg.game.state.MpShooter.GameWorld;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -166,7 +167,7 @@ public class Player extends Person implements EventHandler<Event>
 		GameWorld.getClient().updatePlayerPos((int)x, (int)y, (int)rot);
 
 		//update the camera
-		GameWorld.getInstance().updateCamera(x, y);
+		GameWorld.getInstance().updateCamera(Main.MAGIC_NUM - x, Main.MAGIC_NUM - y);
 		
 		//shoot gun if needed
 		if (isShooting)

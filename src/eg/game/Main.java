@@ -2,6 +2,7 @@ package eg.game;
 
 import eg.game.state.*;
 import eg.game.state.MapMaker.MapMaker;
+import eg.game.state.MpShooter.MpShooter;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,8 +12,9 @@ import javafx.stage.Stage;
 
 public class Main extends Application
 {
-	private static final int WINDOW_HEIGHT = 800;
-	private static final int WINDOW_WIDTH = 800;
+	public static final int WINDOW_HEIGHT = 800;
+	public static final int WINDOW_WIDTH = 800;
+	public static final int MAGIC_NUM = 348;
 	private static final boolean FULLSCREEN = false;
 	
 	Scene scene;

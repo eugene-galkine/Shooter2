@@ -11,4 +11,14 @@ public interface IDrawable
 	{
 		return 0;
 	}
+	
+	public default float getWidth()
+	{
+		return (float) getImg().getWidth();
+	}
+	
+	public default float getHeight()
+	{
+		return (float) getImg().getHeight();
+	}
 }
