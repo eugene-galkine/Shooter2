@@ -1,6 +1,6 @@
 package eg.game.world.objects;
 
-import eg.game.state.MPShooter.GameWorld;
+import eg.game.state.MpShooter.GameWorld;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
 import javafx.scene.image.Image;

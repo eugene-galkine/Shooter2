@@ -1,6 +1,7 @@
 package eg.game;
 
 import eg.game.state.*;
+import eg.game.state.MapMaker.MapMaker;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -39,7 +40,7 @@ public class Main extends Application
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		//TODO: changeState(new MainMenu(pane, scene, this));
-		changeState(new MpShooter(gc, scene, this));
+		changeState(new MapMaker(gc, scene, this));
 	}
 	
 	public void changeState(State state)

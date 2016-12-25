@@ -2,7 +2,7 @@ package eg.game.world.objects.player;
 
 import java.util.Random;
 
-import eg.game.state.MPShooter.GameWorld;
+import eg.game.state.MpShooter.GameWorld;
 import eg.game.world.objects.Bullet;
 
 public class Weapon 

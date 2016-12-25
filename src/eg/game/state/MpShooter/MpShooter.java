@@ -1,10 +1,10 @@
-package eg.game.state;
+package eg.game.state.MpShooter;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import eg.game.Main;
 import eg.game.net.ClientFactory;
-import eg.game.state.MPShooter.GameWorld;
+import eg.game.state.State;
 import eg.game.world.objects.Wall;
 import eg.game.world.objects.player.Player;
 

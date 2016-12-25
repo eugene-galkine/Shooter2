@@ -1,6 +1,6 @@
 package eg.game.world.objects.player;
 
-import eg.game.state.MPShooter.GameWorld;
+import eg.game.state.MpShooter.GameWorld;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
