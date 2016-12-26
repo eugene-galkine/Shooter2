@@ -37,7 +37,7 @@ public abstract class World
 		if (obj instanceof ICollidable)
 			synchronized (solidObjects)
 			{
-				solidObjects.add((ICollidable)obj);
+				solidObjects.add(0, (ICollidable)obj);
 			}
 	}
 	

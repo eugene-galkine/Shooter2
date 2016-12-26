@@ -25,7 +25,7 @@ public class Wall implements IDrawable, ICollidable
 	
 	public Wall (float inX, float inY, float w, float h)
 	{
-		img = new Image("images/bullets/bullet.png",16,16,true,true);
+		img = new Image("images/map/selected_texture.png",16,16,true,true);
 		x = inX;
 		y = inY;
 		this.w = w;
@@ -70,6 +70,10 @@ public class Wall implements IDrawable, ICollidable
 		return r.getBoundsInLocal();
 	}
 	
+	/*
+	 * editor functions
+	 */
+	
 	public void setWidth(float w)
 	{
 		this.w = w;
@@ -80,5 +84,35 @@ public class Wall implements IDrawable, ICollidable
 	{
 		this.h = h;
 		r.setHeight(h);
+	}
+	
+	public void select()
+	{
+		img = new Image("images/map/selected_texture.png",16,16,true,true);
+	}
+
+	public void deselect() 
+	{
+		img = new Image("images/map/empty_texture.png",16,16,true,true);
+	}
+	
+	public void normalize()
+	{
+		//fix negative size
+		if (w < 0)
+		{
+			w = Math.abs(w);
+			x -= w;
+			r.setWidth(w);
+			r.setX(x);
+		}
+		
+		if (h < 0)
+		{
+			h = Math.abs(h);
+			y -= h;
+			r.setHeight(h);
+			r.setY(y);
+		}
 	}
 }

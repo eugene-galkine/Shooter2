@@ -66,6 +66,10 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					scrolY = my;
 				} else if (mouse.getButton() == editButton)
 				{
+					//deselect if we have a wall already selected
+					if (selectedWall != null)
+						selectedWall.deselect();
+					
 					//place a wall if we pressed mb2
 					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1);
 					MapMakerWorld.getInstance().addObject(selectedWall);
@@ -78,16 +82,16 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 				if (mouse.getButton() == editButton)
 				{
 					//selecting objects in the view
-					if (selectedWall.getWidth() == 1 && selectedWall.getWidth() == selectedWall.getHeight())
+					if (Math.abs(selectedWall.getWidth()) < 5 && Math.abs(selectedWall.getHeight()) < 5)
 					{
 						MapMakerWorld.getInstance().removeObject(selectedWall);
 						selectedWall = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
+						//change color of the wall if we are clicking on something instead of empty canvas
 						if (selectedWall != null)
-						{
-							//TODO change color or something
-							selectedWall.setWidth(10);
-						}
-					}
+							selectedWall.select();
+					} else
+						//fix negative size
+						selectedWall.normalize();
 				}
 				break;
 			default:
