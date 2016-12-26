@@ -10,7 +10,7 @@ import javafx.scene.transform.Rotate;
 public class WorldDrawer extends AnimationTimer
 {
 	private GraphicsContext gc;
-	private float offX, offY;
+	private float offX, offY, zoom;
 	private LinkedList<IDrawable> objects;
 	
 	public WorldDrawer (GraphicsContext newGC)
@@ -19,6 +19,7 @@ public class WorldDrawer extends AnimationTimer
 		offX = 0;
 		offY = 0;
 		objects = new LinkedList<IDrawable>();
+		zoom = 1;
 	}
 	
 	public void setOffset(float x, float y) 
@@ -62,7 +63,7 @@ public class WorldDrawer extends AnimationTimer
 							drawable.getX() + offX + (drawable.getImg().getWidth()/2), 
 							drawable.getY() + offY + (drawable.getImg().getHeight()/2));
 		        
-				gc.drawImage(drawable.getImg(), drawable.getX() + offX, drawable.getY() + offY, drawable.getWidth(), drawable.getHeight());
+				gc.drawImage(drawable.getImg(), drawable.getX() * zoom + offX, drawable.getY() * zoom + offY, drawable.getWidth() * zoom, drawable.getHeight() * zoom);
 				gc.restore();
 			}
 		}
@@ -73,4 +74,9 @@ public class WorldDrawer extends AnimationTimer
         Rotate r = new Rotate(angle, px, py);
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
     }
+
+	public void zoom(float i) 
+	{
+		zoom = i;
+	}
 }

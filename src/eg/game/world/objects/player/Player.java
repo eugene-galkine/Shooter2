@@ -149,7 +149,7 @@ public class Player extends Person implements EventHandler<Event>
 		bounds.setX(x + BOUND_SIZE_DIFF);
 		
 		//check x collision
-		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()))
+		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()) != null)
 			x = oldX;
 		
 		//update both x and y for collision box in case x was reverted
@@ -157,7 +157,7 @@ public class Player extends Person implements EventHandler<Event>
 		bounds.setY(y + BOUND_SIZE_DIFF);
 		
 		//check y collision
-		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()))
+		if (GameWorld.getInstance().checkCollision(bounds.getBoundsInParent()) != null)
 			y = oldY;
 		
 		//reset y bounds

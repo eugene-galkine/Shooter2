@@ -45,4 +45,10 @@ public class MapMakerWorld extends World
 	{
 		removeObject(list.get(list.size() - 1));
 	}
+
+	public void zoom(float i) 
+	{
+		//zoom the drawable
+		drawer.zoom(i);
+	}
 }

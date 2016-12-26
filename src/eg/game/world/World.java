@@ -12,7 +12,7 @@ public abstract class World
 {	
 	private LinkedList<ICollidable> solidObjects;
 	private WorldUpdater updater;
-	private WorldDrawer drawer;
+	protected WorldDrawer drawer;
 	
 	public World(GraphicsContext newgc)
 	{
@@ -65,16 +65,16 @@ public abstract class World
 		drawer.setOffset(x, y);
 	}
 	
-	public boolean checkCollision(Bounds b)
+	public Object checkCollision(Bounds b)
 	{
 		synchronized (solidObjects)
 		{
 			//check if this object intersects any that are collidable
 			for (ICollidable obj : solidObjects)
 				if (b.intersects(obj.getBounds()))
-					return true;
+					return obj;
 			
-			return false;
+			return null;
 		}
 	}
 }

@@ -81,7 +81,7 @@ public class Bullet extends IUpdatable implements IDrawable
 		//check collision
 		r.setX(x);
 		r.setY(y);
-		if (GameWorld.getInstance().checkCollision(r.getBoundsInLocal()))
+		if (GameWorld.getInstance().checkCollision(r.getBoundsInLocal()) != null)
 			GameWorld.getInstance().removeObject(this);
 		
 		//TODO collision with players & fix concurrent in collision inside world

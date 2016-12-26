@@ -24,6 +24,8 @@ public class MapMaker extends State
 		scene.setOnMousePressed(mv);
 		scene.setOnMouseReleased(mv);
 		
+		scene.setOnScroll(mv);
+		
 		scene.setOnKeyPressed(mv);
 		
 		MapMakerWorld.getInstance().addObject(mv);

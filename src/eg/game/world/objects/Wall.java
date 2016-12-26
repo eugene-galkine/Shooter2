@@ -12,7 +12,7 @@ public class Wall implements IDrawable, ICollidable
 	private Image img;
 	private Rectangle r;
 	
-	public Wall (int inX, int inY)
+	public Wall (float inX, float inY)
 	{
 		img = new Image("images/bullets/bullet.png",16,16,true,true);
 		x = inX;
@@ -23,7 +23,7 @@ public class Wall implements IDrawable, ICollidable
 		r = new Rectangle(x, y, 16, 16);
 	}
 	
-	public Wall (int inX, int inY, int w, int h)
+	public Wall (float inX, float inY, float w, float h)
 	{
 		img = new Image("images/bullets/bullet.png",16,16,true,true);
 		x = inX;
@@ -52,29 +52,33 @@ public class Wall implements IDrawable, ICollidable
 		return y;
 	}
 
+	@Override
 	public float getWidth()
 	{
 		return w;
 	}
 	
-	public void setWidth(float w)
-	{
-		this.w = w;
-	}
-	
+	@Override
 	public float getHeight()
 	{
 		return h;
-	}
-	
-	public void setHeight(float h)
-	{
-		this.h = h;
 	}
 	
 	@Override
 	public Bounds getBounds() 
 	{
 		return r.getBoundsInLocal();
+	}
+	
+	public void setWidth(float w)
+	{
+		this.w = w;
+		r.setWidth(w);
+	}
+	
+	public void setHeight(float h)
+	{
+		this.h = h;
+		r.setHeight(h);
 	}
 }

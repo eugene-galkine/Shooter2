@@ -8,64 +8,87 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 
 public class MapView extends IUpdatable implements EventHandler<Event>
 {
-	private float x, y, scrolX, scrolY, mx, my, placemx, placemy;
-	private Wall placingWall;
+	private static final MouseButton scrollButton = MouseButton.SECONDARY;
+	private static final MouseButton editButton = MouseButton.PRIMARY;
+	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom;
+	private Wall selectedWall;
 	
 	public MapView()
 	{
 		x = 0;
 		y = 0;
-		placingWall = null;
+		selectedWall = null;
+		mapZoom = 1;
 	}
 	
 	@Override
 	public void handle(Event e) 
 	{
-		if (e instanceof MouseEvent)
+		if (e instanceof ScrollEvent)
+		{
+			ScrollEvent scroll = (ScrollEvent)e;
+			//zoom with the mouse wheel
+			mapZoom /= scroll.getDeltaY() < 0 ? 2 : 0.5;
+			MapMakerWorld.getInstance().zoom(mapZoom);
+		} else if (e instanceof MouseEvent)
 		{
 			MouseEvent mouse = (MouseEvent)e;
+			mx = -(int)mouse.getX();
+			my = Main.WINDOW_HEIGHT - (int)mouse.getY();
 			
 			switch (mouse.getEventType().getName())
 			{
 			case "MOUSE_DRAGGED":
-				mx = -(int)mouse.getX();
-				my = Main.WINDOW_HEIGHT - (int)mouse.getY();
-				
 				//scroll if we are holding mb1
-				if (mouse.getButton() == MouseButton.SECONDARY)
+				if (mouse.getButton() == scrollButton)
 				{
 					x -= scrolX - mx;
 					y -= scrolY - my;
 					scrolX = mx;
 					scrolY = my;
-				} else if (mouse.getButton() == MouseButton.PRIMARY)
+				} else if (mouse.getButton() == editButton)
 				{
 					//resize the object we are placing if holding mb2
-					placingWall.setWidth(placemx - mx);
-					placingWall.setHeight(placemy - my);
+					selectedWall.setWidth((placemx - mx) / mapZoom);
+					selectedWall.setHeight((placemy - my) / mapZoom);
 				}
 					
 				break;
 			case "MOUSE_PRESSED":
-				if (mouse.getButton() == MouseButton.SECONDARY)
+				if (mouse.getButton() == scrollButton)
 				{
 					//start scrolling if we pressed mb1
-					scrolX = -(int)mouse.getX();
-					scrolY = Main.WINDOW_HEIGHT - (int)mouse.getY();
-				} else if (mouse.getButton() == MouseButton.PRIMARY)
+					scrolX = mx;
+					scrolY = my;
+				} else if (mouse.getButton() == editButton)
 				{
 					//place a wall if we pressed mb2
-					placingWall = new Wall((int)x + (int)mouse.getX(), (int)y + (int)mouse.getY(), 1, 1);
-					MapMakerWorld.getInstance().addObject(placingWall);
-					placemx = -(int)mouse.getX();
-					placemy = Main.WINDOW_HEIGHT - (int)mouse.getY();
+					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1);
+					MapMakerWorld.getInstance().addObject(selectedWall);
+					placemx = mx;
+					placemy = my;
 				}
 				
 				break;
 			case "MOUSE_RELEASED":
+				if (mouse.getButton() == editButton)
+				{
+					//selecting objects in the view
+					if (selectedWall.getWidth() == 1 && selectedWall.getWidth() == selectedWall.getHeight())
+					{
+						MapMakerWorld.getInstance().removeObject(selectedWall);
+						selectedWall = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
+						if (selectedWall != null)
+						{
+							//TODO change color or something
+							selectedWall.setWidth(10);
+						}
+					}
+				}
 				break;
 			default:
 				break;
@@ -80,10 +103,16 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			switch (key.getCode())
 			{
 			case Z:
+				//remove last placed
 				if (key.isControlDown())
 					MapMakerWorld.getInstance().removeLast();
-				
 				break;
+			case DIGIT0:
+				//reset view
+				mapZoom = 1;
+				x = 0;
+				y = 0;
+				MapMakerWorld.getInstance().zoom(mapZoom);
 			default:
 				break;
 			}
