@@ -24,6 +24,8 @@ public class MapMaker extends State
 		scene.setOnMousePressed(mv);
 		scene.setOnMouseReleased(mv);
 		
+		scene.setOnKeyPressed(mv);
+		
 		MapMakerWorld.getInstance().addObject(mv);
 		MapMakerWorld.getInstance().addObject(new Wall(10, 10, 40, 90));
 		MapMakerWorld.getInstance().addObject(new Wall(72, 10));
