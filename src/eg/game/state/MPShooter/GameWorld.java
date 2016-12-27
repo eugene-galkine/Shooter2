@@ -1,4 +1,4 @@
-package eg.game.state.MpShooter;
+package eg.game.state.mpShooter;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;

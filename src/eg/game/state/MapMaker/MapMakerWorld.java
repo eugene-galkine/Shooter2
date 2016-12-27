@@ -1,9 +1,11 @@
-package eg.game.state.MapMaker;
+package eg.game.state.mapMaker;
 
 import java.util.ArrayList;
 
 import javafx.scene.canvas.GraphicsContext;
+import eg.game.map.MapFileLoader;
 import eg.game.world.World;
+import eg.game.world.objects.mapMaker.MaperWall;
 
 public class MapMakerWorld extends World
 {
@@ -27,7 +29,8 @@ public class MapMakerWorld extends World
 	public void addObject(Object obj)
 	{
 		super.addObject(obj);
-		list.add(obj);
+		if (obj instanceof MaperWall)
+			list.add(obj);
 	}
 	
 	@Override
@@ -48,7 +51,20 @@ public class MapMakerWorld extends World
 
 	public void zoom(float i) 
 	{
-		//zoom the drawable
+		//change zoom level
 		drawer.zoom(i);
+	}
+
+	public void saveMap() 
+	{
+		MapFileLoader.saveMap(list);
+	}
+
+	public void loadMap() 
+	{
+		ArrayList<Object> inList = MapFileLoader.loadMap();
+		
+		for (Object obj : inList)
+			addObject(obj);
 	}
 }

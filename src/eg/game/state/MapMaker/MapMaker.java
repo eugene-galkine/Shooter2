@@ -1,4 +1,4 @@
-package eg.game.state.MapMaker;
+package eg.game.state.mapMaker;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;

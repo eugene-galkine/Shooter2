@@ -1,6 +1,6 @@
 package eg.game.net;
 
-import eg.game.state.MpShooter.GameWorld;
+import eg.game.state.mpShooter.GameWorld;
 
 public class ClientProxy 
 {

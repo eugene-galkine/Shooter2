@@ -7,19 +7,20 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 public class Wall implements IDrawable, ICollidable
-{
+{	
+	private int currentImg;
 	private float x, y, w, h;
 	private Image img;
 	private Rectangle r;
 	
 	public Wall (float inX, float inY)
 	{
-		img = new Image("images/bullets/bullet.png",16,16,true,true);
+		img = new Image("images/map/wall1.png",16,16,true,true);
 		x = inX;
 		y = inY;
 		w = 16;
 		h = 16;
-		
+		currentImg = 1;
 		r = new Rectangle(x, y, 16, 16);
 	}
 	
@@ -30,7 +31,7 @@ public class Wall implements IDrawable, ICollidable
 		y = inY;
 		this.w = w;
 		this.h = h;
-		
+		currentImg = -1;
 		r = new Rectangle(x, y, w, h);
 	}
 	
@@ -68,51 +69,5 @@ public class Wall implements IDrawable, ICollidable
 	public Bounds getBounds() 
 	{
 		return r.getBoundsInLocal();
-	}
-	
-	/*
-	 * editor functions
-	 */
-	
-	public void setWidth(float w)
-	{
-		this.w = w;
-		r.setWidth(w);
-	}
-	
-	public void setHeight(float h)
-	{
-		this.h = h;
-		r.setHeight(h);
-	}
-	
-	public void select()
-	{
-		img = new Image("images/map/selected_texture.png",16,16,true,true);
-	}
-
-	public void deselect() 
-	{
-		img = new Image("images/map/empty_texture.png",16,16,true,true);
-	}
-	
-	public void normalize()
-	{
-		//fix negative size
-		if (w < 0)
-		{
-			w = Math.abs(w);
-			x -= w;
-			r.setWidth(w);
-			r.setX(x);
-		}
-		
-		if (h < 0)
-		{
-			h = Math.abs(h);
-			y -= h;
-			r.setHeight(h);
-			r.setY(y);
-		}
 	}
 }

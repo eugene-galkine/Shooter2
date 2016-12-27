@@ -1,8 +1,8 @@
-package eg.game.state.MapMaker;
+package eg.game.state.mapMaker;
 
 import eg.game.Main;
-import eg.game.world.objects.Wall;
 import eg.game.world.objects.interfaces.IUpdatable;
+import eg.game.world.objects.mapMaker.MaperWall;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
@@ -15,7 +15,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 	private static final MouseButton scrollButton = MouseButton.SECONDARY;
 	private static final MouseButton editButton = MouseButton.PRIMARY;
 	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom;
-	private Wall selectedWall;
+	private MaperWall selectedWall;
 	
 	public MapView()
 	{
@@ -32,7 +32,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 		{
 			ScrollEvent scroll = (ScrollEvent)e;
 			//zoom with the mouse wheel
-			mapZoom /= scroll.getDeltaY() < 0 ? 2 : 0.5;
+			mapZoom /= scroll.getDeltaY() < 0 ? 1.25 : 0.8;
 			MapMakerWorld.getInstance().zoom(mapZoom);
 		} else if (e instanceof MouseEvent)
 		{
@@ -71,7 +71,8 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 						selectedWall.deselect();
 					
 					//place a wall if we pressed mb2
-					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1);
+					selectedWall = new MaperWall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1);
+					selectedWall.select();
 					MapMakerWorld.getInstance().addObject(selectedWall);
 					placemx = mx;
 					placemy = my;
@@ -85,7 +86,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					if (Math.abs(selectedWall.getWidth()) < 5 && Math.abs(selectedWall.getHeight()) < 5)
 					{
 						MapMakerWorld.getInstance().removeObject(selectedWall);
-						selectedWall = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
+						selectedWall = (MaperWall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
 						//change color of the wall if we are clicking on something instead of empty canvas
 						if (selectedWall != null)
 							selectedWall.select();
@@ -107,16 +108,40 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			switch (key.getCode())
 			{
 			case Z:
-				//remove last placed
+				//remove last placed with ctrl-z
 				if (key.isControlDown())
 					MapMakerWorld.getInstance().removeLast();
 				break;
 			case DIGIT0:
-				//reset view
+				//reset view with 0 key
 				mapZoom = 1;
 				x = 0;
 				y = 0;
 				MapMakerWorld.getInstance().zoom(mapZoom);
+				break;
+			case Q:
+				//change the image on this object when pressing q
+				if (selectedWall != null)
+					selectedWall.nextImg();
+				break;
+			case S:
+				//save with ctrl-s
+				if (key.isControlDown())
+					MapMakerWorld.getInstance().saveMap();
+				break;
+			case DELETE:
+				//remove selected block with delete key
+				if (selectedWall != null)
+				{
+					MapMakerWorld.getInstance().removeObject(selectedWall);
+					selectedWall = null;
+				}
+				break;
+			case O:
+				//open map with O
+				if (key.isControlDown())
+					MapMakerWorld.getInstance().loadMap();
+				break;
 			default:
 				break;
 			}
