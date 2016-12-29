@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import eg.game.world.objects.mapMaker.MaperWall;
+import eg.game.world.objects.Wall;
 
 public class MapFileLoader
 {
@@ -25,11 +25,12 @@ public class MapFileLoader
 			//go through list and save each object
 			for (Object obj : list)
 			{
-				MaperWall wall = (MaperWall) obj;
+				Wall wall = (Wall) obj;
 				os.writeInt((int)wall.getX());
 				os.writeInt((int)wall.getY());
 				os.writeInt((int)wall.getWidth());
 				os.writeInt((int)wall.getHeight());
+				os.writeInt((int)wall.getRot());
 				os.writeInt(wall.getImgID());
 			}
 			
@@ -52,7 +53,7 @@ public class MapFileLoader
 			//read to end of file
 			while (os.available() > 0)
 			{
-				MaperWall wall = new MaperWall(os.readInt(), os.readInt(), os.readInt(), os.readInt());
+				Wall wall = new Wall(os.readInt(), os.readInt(), os.readInt(), os.readInt(), os.readInt());
 				wall.setImg(os.readInt());
 				list.add(wall);
 			}

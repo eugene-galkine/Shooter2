@@ -1,10 +1,11 @@
 package eg.game.state.mapMaker;
 
 import eg.game.Main;
+import eg.game.world.objects.Wall;
 import eg.game.world.objects.interfaces.IUpdatable;
-import eg.game.world.objects.mapMaker.MaperWall;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -15,7 +16,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 	private static final MouseButton scrollButton = MouseButton.SECONDARY;
 	private static final MouseButton editButton = MouseButton.PRIMARY;
 	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom;
-	private MaperWall selectedWall;
+	private Wall selectedWall;
 	
 	public MapView()
 	{
@@ -43,6 +44,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			switch (mouse.getEventType().getName())
 			{
 			case "MOUSE_DRAGGED":
+				
 				//scroll if we are holding mb1
 				if (mouse.getButton() == scrollButton)
 				{
@@ -71,7 +73,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 						selectedWall.deselect();
 					
 					//place a wall if we pressed mb2
-					selectedWall = new MaperWall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1);
+					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1, 0);
 					selectedWall.select();
 					MapMakerWorld.getInstance().addObject(selectedWall);
 					placemx = mx;
@@ -86,7 +88,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					if (Math.abs(selectedWall.getWidth()) < 5 && Math.abs(selectedWall.getHeight()) < 5)
 					{
 						MapMakerWorld.getInstance().removeObject(selectedWall);
-						selectedWall = (MaperWall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
+						selectedWall = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
 						//change color of the wall if we are clicking on something instead of empty canvas
 						if (selectedWall != null)
 							selectedWall.select();
@@ -138,9 +140,49 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 				}
 				break;
 			case O:
-				//open map with O
+				//load map with o
 				if (key.isControlDown())
 					MapMakerWorld.getInstance().loadMap();
+				break;
+			case DIGIT1:
+				//set rotation to 0 with 1
+				if (selectedWall != null)
+					selectedWall.setRot(0);
+				break;
+			case DIGIT2:
+				//set rotation to 45 with 2
+				if (selectedWall != null)
+					selectedWall.setRot(45);
+				break;
+			case DIGIT3:
+				//set rotation to 90 with 3
+				if (selectedWall != null)
+					selectedWall.setRot(90);
+				break;
+			case DIGIT4:
+				//set rotation to 135 with 4
+				if (selectedWall != null)
+					selectedWall.setRot(135);
+				break;
+			case DIGIT5:
+				//set rotation to 180 with 5
+				if (selectedWall != null)
+					selectedWall.setRot(180);
+				break;
+			case DIGIT6:
+				//set rotation to 225 with 6
+				if (selectedWall != null)
+					selectedWall.setRot(225);
+				break;
+			case DIGIT7:
+				//set rotation to 270 with 7
+				if (selectedWall != null)
+					selectedWall.setRot(270);
+				break;
+			case DIGIT8:
+				//set rotation to 315 with 8
+				if (selectedWall != null)
+					selectedWall.setRot(315);
 				break;
 			default:
 				break;

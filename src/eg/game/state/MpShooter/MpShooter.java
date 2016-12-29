@@ -1,11 +1,13 @@
 package eg.game.state.mpShooter;
 
+import java.util.ArrayList;
+
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import eg.game.Main;
+import eg.game.map.MapFileLoader;
 import eg.game.net.ClientFactory;
 import eg.game.state.State;
-import eg.game.world.objects.Wall;
 import eg.game.world.objects.player.Player;
 
 public class MpShooter extends State
@@ -33,7 +35,13 @@ public class MpShooter extends State
 		
 		GameWorld.getInstance().addObject(p);
 		
-		GameWorld.getInstance().addObject(new Wall(10, 10));
-		GameWorld.getInstance().addObject(new Wall(26, 10));
+		//load the map
+		ArrayList<Object> inList = MapFileLoader.loadMap();
+		
+		for (Object obj : inList)
+			GameWorld.getInstance().addObject(obj);
+		
+		/*GameWorld.getInstance().addObject(new Wall(10, 10));
+		GameWorld.getInstance().addObject(new Wall(26, 10));*/
 	}
 }

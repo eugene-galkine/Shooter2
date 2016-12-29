@@ -18,7 +18,6 @@ public class MapMaker extends State
 	public void start() 
 	{
 		MapView mv = new MapView();
-		scene.setOnMouseMoved(mv);
 		scene.setOnMouseDragged(mv);
 		scene.setOnMousePressed(mv);
 		scene.setOnMouseReleased(mv);

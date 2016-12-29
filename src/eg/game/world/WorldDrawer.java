@@ -57,13 +57,18 @@ public class WorldDrawer extends AnimationTimer
 			{
 				gc.save();
 				
+				float posX = drawable.getX() * zoom + offX;
+				float posY = drawable.getY() * zoom + offY;
+				float w = drawable.getWidth() * zoom;
+				float h = drawable.getHeight() * zoom;
+				
 				//rotate canvas if needed
 				if (drawable.getRot() != 0)
 					rotate(drawable.getRot(), 
-							drawable.getX() + offX + (drawable.getImg().getWidth()/2), 
-							drawable.getY() + offY + (drawable.getImg().getHeight()/2));
+							posX + ((drawable.getWidth()*zoom)/2), 
+							posY + ((drawable.getHeight()*zoom)/2));
 		        
-				gc.drawImage(drawable.getImg(), drawable.getX() * zoom + offX, drawable.getY() * zoom + offY, drawable.getWidth() * zoom, drawable.getHeight() * zoom);
+				gc.drawImage(drawable.getImg(), posX, posY, w, h);
 				gc.restore();
 			}
 		}

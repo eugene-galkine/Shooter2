@@ -1,9 +1,11 @@
 package eg.game.world;
 
+import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.Rectangle;
 import eg.game.world.objects.interfaces.ICollidable;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
@@ -71,8 +73,20 @@ public abstract class World
 		{
 			//check if this object intersects any that are collidable
 			for (ICollidable obj : solidObjects)
-				if (b.intersects(obj.getBounds()))
+			{
+				if (((IDrawable)obj).getRot() == 0 && b.intersects(obj.getBounds()))
 					return obj;
+				else if (((IDrawable)obj).getRot() != 0)
+				{
+					//special collision case when object is rotated
+					IDrawable drawObj = (IDrawable)obj;
+					AffineTransform at = new AffineTransform();
+					at.rotate(Math.toRadians(drawObj.getRot()), drawObj.getX() + drawObj.getWidth() / 2, drawObj.getY() + drawObj.getHeight() / 2);
+					java.awt.Shape s = at.createTransformedShape(new java.awt.Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
+					if (s.intersects(new java.awt.Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
+						return obj;
+				}
+			}
 			
 			return null;
 		}

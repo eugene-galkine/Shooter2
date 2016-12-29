@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import eg.game.map.MapFileLoader;
 import eg.game.world.World;
-import eg.game.world.objects.mapMaker.MaperWall;
+import eg.game.world.objects.Wall;
 
 public class MapMakerWorld extends World
 {
@@ -29,7 +29,7 @@ public class MapMakerWorld extends World
 	public void addObject(Object obj)
 	{
 		super.addObject(obj);
-		if (obj instanceof MaperWall)
+		if (obj instanceof Wall)
 			list.add(obj);
 	}
 	
@@ -62,6 +62,10 @@ public class MapMakerWorld extends World
 
 	public void loadMap() 
 	{
+		//remove all the objects
+		while (list.size() > 0)
+			removeLast();
+		
 		ArrayList<Object> inList = MapFileLoader.loadMap();
 		
 		for (Object obj : inList)
