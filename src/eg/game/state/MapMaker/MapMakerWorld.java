@@ -44,7 +44,7 @@ public class MapMakerWorld extends World
 		list.remove(obj);
 	}
 	
-	public void removeLast()
+	private void removeLast()
 	{
 		removeObject(list.get(list.size() - 1));
 	}

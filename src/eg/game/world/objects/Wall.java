@@ -154,4 +154,16 @@ public class Wall implements IDrawable, ICollidable
 		r.setRotate(Math.toRadians(rot));
 		//r.getTransforms().add(new Rotate(rot,getWidth()/2,getHeight()/2));
 	}
+
+	public void setX(float i) 
+	{
+		x = i;
+		r.setX(x);
+	}
+	
+	public void setY(float i) 
+	{
+		y = i;
+		r.setY(y);
+	}
 }

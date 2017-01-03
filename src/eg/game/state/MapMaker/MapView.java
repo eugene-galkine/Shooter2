@@ -5,18 +5,37 @@ import eg.game.world.objects.Wall;
 import eg.game.world.objects.interfaces.IUpdatable;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+/**
+ * 
+ * @author Eugene Galkine
+ *
+ * controls for map editor:
+ * save - ctrl+s
+ * load - ctrl+o
+ * undo last move - ctrl+z
+ * pan view - rmb
+ * place/select/move - lmb
+ * zoom - scroll wheel
+ * rotate selected - 1,2,3,4,5,6,7,8
+ * reset camera - 0
+ * next texture - Q
+ * remove selected - DEL
+ * toggle move/resize - M
+ *
+ */
+
 public class MapView extends IUpdatable implements EventHandler<Event>
 {
 	private static final MouseButton scrollButton = MouseButton.SECONDARY;
 	private static final MouseButton editButton = MouseButton.PRIMARY;
-	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom;
+	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom, oldX, oldY;
 	private Wall selectedWall;
+	private boolean move;
 	
 	public MapView()
 	{
@@ -24,6 +43,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 		y = 0;
 		selectedWall = null;
 		mapZoom = 1;
+		move = false;
 	}
 	
 	@Override
@@ -54,9 +74,17 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					scrolY = my;
 				} else if (mouse.getButton() == editButton)
 				{
-					//resize the object we are placing if holding mb2
-					selectedWall.setWidth((placemx - mx) / mapZoom);
-					selectedWall.setHeight((placemy - my) / mapZoom);
+					if (!move)
+					{
+						//resize the object we are placing if holding mb2
+						selectedWall.setWidth((placemx - mx) / mapZoom);
+						selectedWall.setHeight((placemy - my) / mapZoom);
+					} else
+					{
+						//move object around
+						selectedWall.setX(oldX + ((placemx - mx) / mapZoom));
+						selectedWall.setY(oldY + ((placemy - my) / mapZoom));
+					}
 				}
 					
 				break;
@@ -75,9 +103,26 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					//place a wall if we pressed mb2
 					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1, 0);
 					selectedWall.select();
-					MapMakerWorld.getInstance().addObject(selectedWall);
+					
 					placemx = mx;
 					placemy = my;
+					
+					//select object on click
+					Wall hit = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
+					if (hit != null)
+					{
+						//move around selected object
+						move = true;
+						selectedWall = hit;
+						selectedWall.select();
+					} else 
+					{
+						move = false;
+						MapMakerWorld.getInstance().addObject(selectedWall);
+					}
+					
+					oldX = selectedWall.getX();
+					oldY = selectedWall.getY();
 				}
 				
 				break;
@@ -88,10 +133,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					if (Math.abs(selectedWall.getWidth()) < 5 && Math.abs(selectedWall.getHeight()) < 5)
 					{
 						MapMakerWorld.getInstance().removeObject(selectedWall);
-						selectedWall = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
-						//change color of the wall if we are clicking on something instead of empty canvas
-						if (selectedWall != null)
-							selectedWall.select();
+						selectedWall = null;
 					} else
 						//fix negative size
 						selectedWall.normalize();
@@ -110,9 +152,14 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			switch (key.getCode())
 			{
 			case Z:
-				//remove last placed with ctrl-z
+				//undo last move with ctrl-z
+				
 				if (key.isControlDown())
-					MapMakerWorld.getInstance().removeLast();
+					if (selectedWall != null)
+					{
+						selectedWall.setX(oldX);
+						selectedWall.setY(oldY);
+					}
 				break;
 			case DIGIT0:
 				//reset view with 0 key
@@ -143,6 +190,10 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 				//load map with o
 				if (key.isControlDown())
 					MapMakerWorld.getInstance().loadMap();
+				break;
+			case M:
+				//toggle move/resize
+				move = !move;
 				break;
 			case DIGIT1:
 				//set rotation to 0 with 1
