@@ -33,7 +33,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 {
 	private static final MouseButton scrollButton = MouseButton.SECONDARY;
 	private static final MouseButton editButton = MouseButton.PRIMARY;
-	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom, oldX, oldY;
+	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom, oldX, oldY, oldW, oldH;
 	private Wall selectedWall;
 	private boolean move;
 	
@@ -77,8 +77,8 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					if (!move)
 					{
 						//resize the object we are placing if holding mb2
-						selectedWall.setWidth((placemx - mx) / mapZoom);
-						selectedWall.setHeight((placemy - my) / mapZoom);
+						selectedWall.setWidth(oldW + (placemx - mx) / mapZoom);
+						selectedWall.setHeight(oldH + (placemy - my) / mapZoom);
 					} else
 					{
 						//move object around
@@ -111,18 +111,22 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					Wall hit = (Wall) MapMakerWorld.getInstance().checkCollision(selectedWall.getBounds());
 					if (hit != null)
 					{
-						//move around selected object
+						//start moving the selected object if we clicked on something
 						move = true;
 						selectedWall = hit;
 						selectedWall.select();
 					} else 
 					{
+						//otherwise we just created a new wall
 						move = false;
 						MapMakerWorld.getInstance().addObject(selectedWall);
 					}
 					
+					//record original position and reset the size counter
 					oldX = selectedWall.getX();
 					oldY = selectedWall.getY();
+					oldW = 0;
+					oldH = 0;
 				}
 				
 				break;
@@ -157,8 +161,16 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 				if (key.isControlDown())
 					if (selectedWall != null)
 					{
+						//revert the position
 						selectedWall.setX(oldX);
 						selectedWall.setY(oldY);
+						
+						//revert the size if needed
+						if (oldW != 0 && oldH != 0)
+						{
+							selectedWall.setHeight(oldH);
+							selectedWall.setWidth(oldW);
+						}
 					}
 				break;
 			case DIGIT0:
@@ -194,6 +206,12 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 			case M:
 				//toggle move/resize
 				move = !move;
+				//if we are now resizing record old size for undo
+				if (!move && selectedWall != null)
+				{
+					oldW = selectedWall.getWidth();
+					oldH = selectedWall.getHeight();
+				}
 				break;
 			case DIGIT1:
 				//set rotation to 0 with 1
