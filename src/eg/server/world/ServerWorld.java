@@ -142,11 +142,18 @@ public class ServerWorld
 		
 		//get player ID from message
 		int index = msg.indexOf('|') + 1;
-		ServerPlayer player = players[Integer.parseInt(msg.substring(index, index + 1))];
+		ServerPlayer player = null;
+		try
+		{
+			//incase it's not a valid number
+			player = players[Integer.parseInt(msg.substring(index, index + 1))];
+		} catch (Exception e)
+		{
+			System.out.println("bad udp message: " + index);
+		}
 		
-		if (player == null)
-			throw new NullPointerException();
-		
-		player.receiveUDPMessage(msg);
+		if (player != null)
+			//throw new NullPointerException();
+			player.receiveUDPMessage(msg);
 	}
 }

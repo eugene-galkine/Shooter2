@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import eg.game.Control;
 
 public class Player extends Person implements EventHandler<Event>
 {	
@@ -14,6 +15,7 @@ public class Player extends Person implements EventHandler<Event>
 	private boolean movLeft, movRight, movUp, movDown, isShooting;
 	private int movSpeed = 25, health;
 	private Weapon weapon;
+	private int ammo;
 	
 	public Player(int x, int y)
 	{
@@ -27,6 +29,7 @@ public class Player extends Person implements EventHandler<Event>
 		
 		//set my weapon
 		weapon = Weapon.pistol;
+		ammo = weapon.getMaxAmmo();
 		isShooting = false;
 		health = 100;
 	}
@@ -72,34 +75,33 @@ public class Player extends Person implements EventHandler<Event>
 			boolean changed = false;
 			
 			//keyboard event
-			switch (key.getCode())
+			if (key.getCode() == Control.Leftward.getCode())
 			{
-			case A:
 				if (pressed != movLeft)
 					changed = true;
 				
 				movLeft = pressed;
-				break;
-			case D:
+			} else if (key.getCode() == Control.Rightward.getCode())
+			{
 				if (pressed != movRight)
 					changed = true;
 				
 				movRight = pressed;
-				break;
-			case S:
+			} else if (key.getCode() == Control.Backward.getCode())
+			{
 				if (pressed != movDown)
 					changed = true;
 				
 				movDown = pressed;
-				break;
-			case W:
+			} else if (key.getCode() == Control.Forward.getCode())
+			{
 				if (pressed != movUp)
 					changed = true;
 				
 				movUp = pressed;
-				break;
-			default:
-				break;	
+			} else if (key.getCode() == Control.Reload.getCode())
+			{
+				//TODO
 			}
 			
 			//move direction was changed
@@ -197,5 +199,10 @@ public class Player extends Person implements EventHandler<Event>
 		
 		bounds.setX(x + BOUND_SIZE_DIFF);
 		bounds.setY(y + BOUND_SIZE_DIFF);
+	}
+	
+	public void reload()
+	{
+		
 	}
 }
