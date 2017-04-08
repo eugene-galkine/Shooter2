@@ -132,6 +132,11 @@ public class ServerPlayer
 		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
 	}
 	
+	private void throwGernade()
+	{
+		Server.getWorld().sendToAll(MsgType.THROW_GERNADE, this, false);
+	}
+	
 	private void hitBullet(String substring) 
 	{
 		int bulletID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
@@ -227,6 +232,12 @@ public class ServerPlayer
 			} else if (in.startsWith("DEAD"))
 			{
 				die();
+			}  else if (in.startsWith("SHOOT"))
+			{
+				shootBullet(in.substring(in.indexOf('|') + 3));
+			} else if (in.startsWith("GERNADE"))
+			{
+				throwGernade();
 			}
 		} catch (Exception e)
 		{
@@ -242,9 +253,6 @@ public class ServerPlayer
 			if (in.startsWith("POS"))
 			{
 				updatePlayerPos(in.substring(in.indexOf('|') + 3));
-			} else if (in.startsWith("SHOOT"))
-			{
-				shootBullet(in.substring(in.indexOf('|') + 3));
 			}
 		} catch (Exception e)
 		{

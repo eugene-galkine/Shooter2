@@ -45,6 +45,7 @@ public class Server implements Runnable
 			try
 			{
 				Socket connectionSocket = serverSocket.accept();
+				connectionSocket.setTcpNoDelay(true);
 				new Thread(new ClaimedSocket(connectionSocket)).start();
 		    } catch (Exception e) {e.printStackTrace();}
 		}

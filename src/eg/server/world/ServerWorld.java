@@ -17,7 +17,8 @@ public class ServerWorld
 		REMOVE_PLAYER, //1
 		UPDATE_POS, //2
 		SHOOT, //3
-		SPAWN  //4
+		SPAWN,  //4
+		THROW_GERNADE
 	}
 	
 	public ServerWorld()
@@ -102,7 +103,7 @@ public class ServerWorld
 	{
 		for (ServerPlayer player : players)
 		{
-			if (player == null || (player == currentPlayer && allButSelf))
+			if (player == null || (allButSelf && player == currentPlayer))
 				continue;
 			
 			sendTo(mt, player, currentPlayer);
@@ -123,7 +124,7 @@ public class ServerWorld
 			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		case SHOOT:
-			player.sendUDPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getShootRot()+",");
+			player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getShootRot()+",");
 			break;
 		case SPAWN:
 			if (player != currentPlayer)
@@ -131,6 +132,9 @@ public class ServerWorld
 			else
 				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
 			
+			break;
+		case THROW_GERNADE:
+			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		}
 	}

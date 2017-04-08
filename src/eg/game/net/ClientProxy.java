@@ -23,7 +23,27 @@ public class ClientProxy
 	{
 		//a new message was received over tcp
 		System.out.println("message from server tcp: " + msg);
-		if (msg.startsWith("NEW_PLAYER|"))
+		if (msg.startsWith("SHOOT|"))
+		{
+			msg = msg.substring("SHOOT|".length());
+			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int shootRot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			
+			GameWorld.getInstance().netShoot(id, shootRot);
+		} else if (msg.startsWith("GERNADE"))
+		{
+			msg = msg.substring("GERNADE|".length());
+			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int x = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int y = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			int rot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			
+			GameWorld.getInstance().throwGernade(id, x, y, rot);
+		} else if (msg.startsWith("NEW_PLAYER|"))
 		{
 			msg = msg.substring("NEW_PLAYER|".length());
 			GameWorld.getInstance().newPlayer(Integer.parseInt(msg));
@@ -76,14 +96,6 @@ public class ClientProxy
 			int rot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			
 			GameWorld.getInstance().updatePlayer(id, x, y, rot);
-		} else if (msg.startsWith("SHOOT|"))
-		{
-			msg = msg.substring("SHOOT|".length());
-			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int shootRot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			
-			GameWorld.getInstance().netShoot(id, shootRot);
 		}
 	}
 	
@@ -94,7 +106,7 @@ public class ClientProxy
 
 	public void shoot(int rot) 
 	{
-		client.sendUDPMessage("SHOOT|"+ID+","+rot+",");
+		client.sendTCPMessage("SHOOT|"+ID+","+rot+",");
 	}
 
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
@@ -111,5 +123,10 @@ public class ClientProxy
 	public int getID() 
 	{
 		return ID;
+	}
+	
+	public void throwGernade()
+	{
+		client.sendTCPMessage("GERNADE|"+ID+",");
 	}
 }

@@ -98,6 +98,9 @@ public class Player extends Person implements EventHandler<Event>
 				
 				movUp = pressed;
 				break;
+			case G:
+				GameWorld.getClient().throwGernade();
+				break;
 			default:
 				break;	
 			}
@@ -109,7 +112,7 @@ public class Player extends Person implements EventHandler<Event>
 			}
 		}
 	}
-	
+
 	private void setMoveVect ()
 	{
 		//horizontal movement

@@ -36,13 +36,12 @@ public class Main extends Application
 		
 		Canvas canvas = new Canvas( WINDOW_WIDTH, WINDOW_HEIGHT );
 		root.getChildren().add( canvas );
-		
 		stage.show();
 		
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		//TODO: changeState(new MainMenu(pane, scene, this));
-		changeState(new MapMaker(gc, scene, this));
+		changeState(new MpShooter(gc, scene, this));
 	}
 	
 	public void changeState(State state)

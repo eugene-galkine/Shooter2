@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.shape.Rectangle;
 import eg.game.world.objects.interfaces.ICollidable;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;

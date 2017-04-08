@@ -41,6 +41,7 @@ public class Client implements Runnable
 		{
 			//TCP
 			socket = new Socket(ip, port);
+			socket.setTcpNoDelay(true);
 			outToServer = new DataOutputStream(socket.getOutputStream());
 			
 			//UDP

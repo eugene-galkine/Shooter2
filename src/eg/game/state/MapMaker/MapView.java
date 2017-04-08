@@ -89,6 +89,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					
 				break;
 			case "MOUSE_PRESSED":
+				
 				if (mouse.getButton() == scrollButton)
 				{
 					//start scrolling if we pressed mb1
@@ -131,6 +132,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 				
 				break;
 			case "MOUSE_RELEASED":
+				
 				if (mouse.getButton() == editButton)
 				{
 					//selecting objects in the view
@@ -142,6 +144,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 						//fix negative size
 						selectedWall.normalize();
 				}
+				
 				break;
 			default:
 				break;
@@ -172,13 +175,6 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 							selectedWall.setWidth(oldW);
 						}
 					}
-				break;
-			case DIGIT0:
-				//reset view with 0 key
-				mapZoom = 1;
-				x = 0;
-				y = 0;
-				MapMakerWorld.getInstance().zoom(mapZoom);
 				break;
 			case Q:
 				//change the image on this object when pressing q
@@ -212,6 +208,13 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 					oldW = selectedWall.getWidth();
 					oldH = selectedWall.getHeight();
 				}
+				break;
+			case DIGIT0:
+				//reset view with 0 key
+				mapZoom = 1;
+				x = 0;
+				y = 0;
+				MapMakerWorld.getInstance().zoom(mapZoom);
 				break;
 			case DIGIT1:
 				//set rotation to 0 with 1

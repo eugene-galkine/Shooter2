@@ -4,7 +4,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import eg.game.net.ClientProxy;
 import eg.game.world.World;
+import eg.game.world.objects.Gernade;
 import eg.game.world.objects.NetPlayer;
+import eg.game.world.objects.player.Person;
 import eg.game.world.objects.player.Player;
 
 public class GameWorld extends World
@@ -151,5 +153,10 @@ public class GameWorld extends World
 				}
 			}).start();
 		}
+	}
+	
+	public void throwGernade(int id, int x, int y, int rot) 
+	{
+		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id));
 	}
 }
