@@ -9,6 +9,7 @@ public class Control
 	public static final Control Leftward = new Control(KeyCode.A);
 	public static final Control Rightward = new Control(KeyCode.D);
 	
+	public static final Control Gernade = new Control(KeyCode.G);
 	public static final Control Reload = new Control(KeyCode.R);
 	
 	private KeyCode ourCode;

@@ -5,6 +5,7 @@ import eg.game.state.mpShooter.GameWorld;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import eg.game.Control;
@@ -15,7 +16,7 @@ public class Player extends Person implements EventHandler<Event>
 	private boolean movLeft, movRight, movUp, movDown, isShooting;
 	private int movSpeed = 25, health;
 	private Weapon weapon;
-	private int ammo;
+	//private int ammo;
 	
 	public Player(int x, int y)
 	{
@@ -29,7 +30,7 @@ public class Player extends Person implements EventHandler<Event>
 		
 		//set my weapon
 		weapon = Weapon.pistol;
-		ammo = weapon.getMaxAmmo();
+		//ammo = weapon.getMaxAmmo();
 		isShooting = false;
 		health = 100;
 	}
@@ -99,18 +100,12 @@ public class Player extends Person implements EventHandler<Event>
 					changed = true;
 				
 				movUp = pressed;
-<<<<<<< HEAD
-				break;
-			case G:
+			} else if (key.getCode() == Control.Gernade.getCode())
+			{
 				GameWorld.getClient().throwGernade();
-				break;
-			default:
-				break;	
-=======
 			} else if (key.getCode() == Control.Reload.getCode())
 			{
 				//TODO
->>>>>>> origin/master
 			}
 			
 			//move direction was changed
