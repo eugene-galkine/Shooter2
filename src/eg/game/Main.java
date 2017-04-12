@@ -1,7 +1,6 @@
 package eg.game;
 
 import eg.game.state.*;
-import eg.game.state.mapMaker.MapMaker;
 import eg.game.state.mpShooter.MpShooter;
 import javafx.application.Application;
 import javafx.scene.Group;

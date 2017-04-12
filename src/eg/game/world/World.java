@@ -66,7 +66,7 @@ public abstract class World
 		drawer.setOffset(x, y);
 	}
 	
-	public Object checkCollision(Bounds b)
+	public ICollidable checkCollision(Bounds b)
 	{
 		synchronized (solidObjects)
 		{

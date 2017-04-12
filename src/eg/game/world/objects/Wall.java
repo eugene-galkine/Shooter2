@@ -72,7 +72,7 @@ public class Wall implements IDrawable, ICollidable
 	@Override
 	public Bounds getBounds() 
 	{
-		return r.getBoundsInLocal();
+		return r.getBoundsInParent();
 	}
 	
 	/*
