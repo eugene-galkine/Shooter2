@@ -12,7 +12,7 @@ public class Gernade extends IUpdatable implements IDrawable
 	private static final float speed = 30;
 	private static final float imgSize = 16;
 	
-	private float x, y, mx, my;
+	private float x, y, mx, my, dir;
 	private Image img;
 	private Rectangle rect;
 	private int ownerID;
@@ -21,6 +21,7 @@ public class Gernade extends IUpdatable implements IDrawable
 	{
 		this.x = x - (imgSize/2);
 		this.y = y - (imgSize/2);
+		this.dir = dir;
 		this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.ownerID = id;
@@ -73,13 +74,13 @@ public class Gernade extends IUpdatable implements IDrawable
 				boolean flipX = false, flipY = false;
 				rect.setX(oldX);
 				
-				if (rect.getBoundsInParent().intersects(obj.getBounds()))
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					flipY = true;
 				
 				rect.setY(oldY);
 				rect.setX(x);
 				
-				if (rect.getBoundsInParent().intersects(obj.getBounds()))
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					flipX = true;
 				
 				//change direction
@@ -95,46 +96,67 @@ public class Gernade extends IUpdatable implements IDrawable
 				}
 			} else
 			{
-				//TODO
 				//diagonal collision
-				boolean flipX = true, flipY = true;
+				boolean bellow = false, above = false, toLeft = false, toRight = false;
 				
-				//rect.setX(oldX);
+				//find collision direction
+				rect.setX(oldX - 2);
+				rect.setY(oldY);
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
+					toLeft = true;
 				
-				//if (GameWorld.getInstance().checkCollision(rect.getBoundsInParent()) == obj)
-				//	flipY = true;
-				//
-				//rect.setY(oldY);
-				//rect.setX(x);
+				rect.setX(oldX + 2);
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
+					toRight = true;
 				
-				//if (GameWorld.getInstance().checkCollision(rect.getBoundsInParent()) == obj)
-				//	flipX = true;
+				rect.setX(oldX);
+				rect.setY(oldY - 2);
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
+					above = true;
 				
-				/*if (flipX && flipY)
+				rect.setY(oldY + 2);
+				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
+					bellow = true;
+				
+				if ((toRight && bellow) || (toLeft && above))
 				{
-					System.out.println("x and y");
 					float temp = mx;
 					mx = my * -1;
 					my = temp * -1;
-				}
-				else if (flipY)
+				} else if (toLeft && bellow)//if ((toRight && above)|| (toLeft && bellow))
 				{
-					System.out.println("y");
-					float temp = mx;
-					mx = my;
-					my = temp * -1;
-				} else if (flipX)
+					/*dir = (float) Math.toDegrees(Math.atan2(my / speed, mx / speed)) + 90;
+					
+					System.out.println("dir before:" + dir);
+					
+					dir -= 45;
+					
+					//this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
+					this.my = (float) (Math.cos(Math.toRadians(dir)) * speed);
+					dir = (float) Math.toDegrees(Math.atan2(my / speed, mx / speed)) + 90;
+					
+					dir += 45;
+					
+					System.out.println("dir after:" + dir);
+					
+					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
+					this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);*/
+					//TODO
+				} else if (toRight && above)
 				{
-					System.out.println("x");
-					float temp = mx;
-					mx = my * -1;
-					my = temp;
+					//dir = (float) Math.toDegrees(Math.asin(mx / speed));
+					//TODO
+				} else if (toRight || toLeft)
+				{
+					mx *= -1;
+				} else if (above || bellow)
+				{
+					my *= -1;
 				}
 				
 				y = oldY;
-				x = oldX;*/
+				x = oldX;
 			}
 		}
 	}
-
 }

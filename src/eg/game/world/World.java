@@ -66,6 +66,24 @@ public abstract class World
 		drawer.setOffset(x, y);
 	}
 	
+	public boolean collidesWith(ICollidable obj, Bounds b)
+	{
+		if (((IDrawable)obj).getRot() == 0 && b.intersects(obj.getBounds()))
+			return true;
+		else if (((IDrawable)obj).getRot() != 0)
+		{
+			//special collision case when object is rotated
+			IDrawable drawObj = (IDrawable)obj;
+			AffineTransform at = new AffineTransform();
+			at.rotate(Math.toRadians(drawObj.getRot()), drawObj.getX() + drawObj.getWidth() / 2, drawObj.getY() + drawObj.getHeight() / 2);
+			java.awt.Shape s = at.createTransformedShape(new java.awt.Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
+			if (s.intersects(new java.awt.Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	public ICollidable checkCollision(Bounds b)
 	{
 		synchronized (solidObjects)
@@ -73,18 +91,8 @@ public abstract class World
 			//check if this object intersects any that are collidable
 			for (ICollidable obj : solidObjects)
 			{
-				if (((IDrawable)obj).getRot() == 0 && b.intersects(obj.getBounds()))
+				if (collidesWith(obj, b))
 					return obj;
-				else if (((IDrawable)obj).getRot() != 0)
-				{
-					//special collision case when object is rotated
-					IDrawable drawObj = (IDrawable)obj;
-					AffineTransform at = new AffineTransform();
-					at.rotate(Math.toRadians(drawObj.getRot()), drawObj.getX() + drawObj.getWidth() / 2, drawObj.getY() + drawObj.getHeight() / 2);
-					java.awt.Shape s = at.createTransformedShape(new java.awt.Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
-					if (s.intersects(new java.awt.Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
-						return obj;
-				}
 			}
 			
 			return null;

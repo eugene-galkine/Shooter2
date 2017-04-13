@@ -170,7 +170,7 @@ public class Player extends Person implements EventHandler<Event>
 		
 		//tell server about our new position and rotation
 		GameWorld.getClient().updatePlayerPos((int)x, (int)y, (int)rot);
-
+		
 		//update the camera
 		GameWorld.getInstance().updateCamera(Main.MAGIC_NUM - x, Main.MAGIC_NUM - y);
 		
