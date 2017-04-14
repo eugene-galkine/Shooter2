@@ -123,29 +123,21 @@ public class Gernade extends IUpdatable implements IDrawable
 					float temp = mx;
 					mx = my * -1;
 					my = temp * -1;
-				} else if (toLeft && bellow)//if ((toRight && above)|| (toLeft && bellow))
+				} else if ((toRight && above)|| (toLeft && bellow))
 				{
-					/*dir = (float) Math.toDegrees(Math.atan2(my / speed, mx / speed)) + 90;
-					
-					System.out.println("dir before:" + dir);
+					dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
 					
 					dir -= 45;
 					
-					//this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
+					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 					this.my = (float) (Math.cos(Math.toRadians(dir)) * speed);
-					dir = (float) Math.toDegrees(Math.atan2(my / speed, mx / speed)) + 90;
+					dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
 					
 					dir += 45;
 					
-					System.out.println("dir after:" + dir);
-					
 					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
-					this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);*/
-					//TODO
-				} else if (toRight && above)
-				{
-					//dir = (float) Math.toDegrees(Math.asin(mx / speed));
-					//TODO
+					this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
+					//(toRight && above)
 				} else if (toRight || toLeft)
 				{
 					mx *= -1;
