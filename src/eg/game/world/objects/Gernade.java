@@ -12,12 +12,12 @@ public class Gernade extends IUpdatable implements IDrawable
 	private static final float speed = 30;
 	private static final float imgSize = 16;
 	
-	private float x, y, mx, my, dir;
+	private float x, y, mx, my, dir, timer;
 	private Image img;
 	private Rectangle rect;
 	private int ownerID;
 	
-	public Gernade (float x, float y, float dir, int id)
+	public Gernade (float x, float y, float dir, int id, float time)
 	{
 		this.x = x - (imgSize/2);
 		this.y = y - (imgSize/2);
@@ -25,6 +25,7 @@ public class Gernade extends IUpdatable implements IDrawable
 		this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.ownerID = id;
+		this.timer = time;
 		
 		img = new Image("images/bullets/gernade.png", imgSize, imgSize, true, true);
 		
@@ -52,6 +53,15 @@ public class Gernade extends IUpdatable implements IDrawable
 	@Override
 	public void update(float delta) 
 	{
+		timer -= delta;
+		if (timer <= 0)
+		{
+			GameWorld.getInstance().removeObject(this);
+			
+			//TODO explode
+			return;
+		}
+		
 		float oldX = x;
 		float oldY = y;
 		
