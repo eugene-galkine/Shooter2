@@ -6,6 +6,7 @@ import eg.game.state.mpShooter.GameWorld;
 import eg.game.world.objects.interfaces.ICollidable;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
+import eg.game.world.objects.particleSystem.ParticleEmitterFactory;
 
 public class Gernade extends IUpdatable implements IDrawable
 {
@@ -57,8 +58,7 @@ public class Gernade extends IUpdatable implements IDrawable
 		if (timer <= 0)
 		{
 			GameWorld.getInstance().removeObject(this);
-			
-			//TODO explode
+			ParticleEmitterFactory.Explosion.create(x, y, 0);
 			return;
 		}
 		
