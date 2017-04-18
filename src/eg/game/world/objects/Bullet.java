@@ -3,6 +3,7 @@ package eg.game.world.objects;
 import eg.game.state.mpShooter.GameWorld;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
+import eg.game.world.objects.particleSystem.ParticleEmitterFactory;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
@@ -86,6 +87,10 @@ public class Bullet extends IUpdatable implements IDrawable
 		
 		//TODO collision with players & fix concurrent in collision inside world
 		if (GameWorld.getInstance().bulletCollision(r.getBoundsInLocal(), ownerID, weaponID))
+		{
+			float dir = (float) Math.toDegrees(Math.atan2(movY, movX)) + 270;
+			ParticleEmitterFactory.Blood.create(x, y, dir);
 			GameWorld.getInstance().removeObject(this);
+		}
 	}
 }
