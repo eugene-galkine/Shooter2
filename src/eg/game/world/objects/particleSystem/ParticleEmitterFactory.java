@@ -1,16 +1,19 @@
 package eg.game.world.objects.particleSystem;
 
+import javafx.scene.image.Image;
 import eg.game.state.mpShooter.GameWorld;
 
 public class ParticleEmitterFactory
 {
-	public static final ParticleEmitterFactory Explosion = new ParticleEmitterFactory(5, 10, 10, 4, 8, 0, 360, 2, 10, 20, 80);
+	public static final ParticleEmitterFactory Explosion = new ParticleEmitterFactory(3, 6, 3, 4, 8, 0, 360, 6, 17, 20, 80, "explosion");
+	public static final ParticleEmitterFactory Blood = new ParticleEmitterFactory(5, 10, 0, 10, 18, -30, 30, 3, 8, 4, 10, "blood");
 	
-	float emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize;
-	int minObjs, maxObjs;
+	private float emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize;
+	private int minObjs, maxObjs;
+	private Image img[];
 	
 	private ParticleEmitterFactory (int minObjs, int maxObjs, float emitDuration, float minDuration, float maxDuration, float minDir, float maxDir,
-			float minSpeed, float maxSpeed, float minSize, float maxSize)
+			float minSpeed, float maxSpeed, float minSize, float maxSize, String imageName)
 	{
 		this.minObjs = minObjs;
 		this.maxObjs = maxObjs;
@@ -23,11 +26,19 @@ public class ParticleEmitterFactory
 		this.maxSpeed = maxSpeed;
 		this.minSize = minSize;
 		this.maxSize = maxSize;
+		
+		float sizeDif = maxSize - minSize;
+		sizeDif /= 10f;
+		img = new Image[10];
+		
+		//images are loaded here to avoid loading at runtime which causes lag
+		for (int i = 0; i < 10; i++, minSize += sizeDif)
+			img[i] = new Image("images/particles/" + imageName + ".png", minSize, minSize, true, false);
 	}
 	
 	public void create(float x, float y, float dir)
 	{
 		GameWorld.getInstance().addObject(new ParticleEmitter(
-				minObjs, maxObjs, emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize, x, y, dir));
+				minObjs, maxObjs, emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize, x, y, dir, img));
 	}
 }

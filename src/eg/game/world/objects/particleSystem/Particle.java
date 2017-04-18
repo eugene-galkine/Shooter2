@@ -7,10 +7,10 @@ import javafx.scene.image.Image;
 
 public class Particle extends IUpdatable implements IDrawable
 {
-	float x, y, mx, my, duration;
+	private float x, y, mx, my, duration;
 	private Image img;
 	
-	public Particle (float x, float y, float dir, float speed, float timer, float size)
+	public Particle (float x, float y, float dir, float speed, float timer, float size, Image img)
 	{
 		this.x = x - (size/2);
 		this.y = y - (size/2);
@@ -18,7 +18,7 @@ public class Particle extends IUpdatable implements IDrawable
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.duration = timer;
 		
-		img = new Image("images/particles/explosion.png", size, size, true, false);
+		this.img = img;
 	}
 	
 	@Override
