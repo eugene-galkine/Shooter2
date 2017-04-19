@@ -124,7 +124,7 @@ public class ServerWorld
 			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		case SHOOT:
-			player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getShootRot()+",");
+			player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		case SPAWN:
 			if (player != currentPlayer)
@@ -134,7 +134,7 @@ public class ServerWorld
 			
 			break;
 		case THROW_GERNADE:
-			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		}
 	}

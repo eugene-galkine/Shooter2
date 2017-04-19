@@ -76,6 +76,22 @@ public class Weapon
 		Bullet b = new Bullet(x,y,weaponID,rot + (r.nextInt(inaccuracy) - (inaccuracy/2)),bulletSpeed, ID);
 		GameWorld.getInstance().addObject(b);
 		
-		GameWorld.getClient().shoot((int)b.getRot());
+		GameWorld.getClient().shoot(x,y,b.getRot());
+	}
+	
+	public void shootExact(float x, float y, float rot, int ID)
+	{
+		//don't shoot too soon
+		if (System.currentTimeMillis() - shootTimer < shootDelay)
+			return;
+		
+		//update timer
+		shootTimer = System.currentTimeMillis();
+		
+		//shoot a bullet
+		Bullet b = new Bullet(x,y,weaponID,rot,bulletSpeed, ID);
+		GameWorld.getInstance().addObject(b);
+		
+		GameWorld.getClient().shoot(x,y,b.getRot());
 	}
 }

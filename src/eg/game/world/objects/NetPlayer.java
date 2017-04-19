@@ -39,9 +39,9 @@ public class NetPlayer extends Person
 		weapon = Weapon.getFromID(id);
 	}
 	
-	public void shoot(int shootRot) 
+	public void shoot(float x, float y, float shootRot) 
 	{
-		weapon.shoot(this.x + IMG_WIDTH/2, this.y + IMG_HEIGHT/2, shootRot, ID);
+		weapon.shootExact(x, y, shootRot, ID);
 	}
 	
 	public int getID()

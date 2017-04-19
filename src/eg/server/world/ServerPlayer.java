@@ -21,7 +21,8 @@ public class ServerPlayer
 	private byte[] sendData;
 	private DatagramSocket clientSocket;
 	//private long lastUpdated;
-	private int x, y, rot, weaponID, shootRot, health, killer;
+	private int x, y, rot, weaponID, health, killer;
+	private float fx, fy, fRot;
 	private volatile boolean dead;
 	private Object lockObj;
 	
@@ -80,9 +81,19 @@ public class ServerPlayer
 		return rot;
 	}
 
-	public int getShootRot() 
+	public float getfX()
 	{
-		return shootRot;
+		return fx;
+	}
+	
+	public float getfY()
+	{
+		return fy;
+	}
+	
+	public float getfRot() 
+	{
+		return fRot;
 	}
 	
 	public int getWeaponID()
@@ -127,13 +138,24 @@ public class ServerPlayer
 	
 	private void shootBullet(String substring) 
 	{
-		shootRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		//shootRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		substring = substring.substring(substring.indexOf(',') + 1);
+		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		substring = substring.substring(substring.indexOf(',') + 1);
+		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
 		
 		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
 	}
 	
-	private void throwGernade()
+	private void throwGernade(String substring)
 	{
+		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		substring = substring.substring(substring.indexOf(',') + 1);
+		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		substring = substring.substring(substring.indexOf(',') + 1);
+		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		
 		Server.getWorld().sendToAll(MsgType.THROW_GERNADE, this, false);
 	}
 	
@@ -234,10 +256,10 @@ public class ServerPlayer
 				die();
 			}  else if (in.startsWith("SHOOT"))
 			{
-				shootBullet(in.substring(in.indexOf('|') + 3));
+				shootBullet(in.substring(in.indexOf('|') + 1));
 			} else if (in.startsWith("GERNADE"))
 			{
-				throwGernade();
+				throwGernade(in.substring(in.indexOf('|') + 1));
 			}
 		} catch (Exception e)
 		{

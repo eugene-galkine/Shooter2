@@ -92,11 +92,11 @@ public class GameWorld extends World
 			System.out.println("Missing player with ID: " + id);
 	}
 
-	public void netShoot(int id, int shootRot) 
+	public void netShoot(int id, float x, float y, float shootRot) 
 	{
 		//someone else shot
 		if (netPlayers[id] != null)
-			netPlayers[id].shoot(shootRot);
+			netPlayers[id].shoot(x, y, shootRot);
 		else
 			System.out.println("Missing player with ID: " + id);
 	}
@@ -155,7 +155,7 @@ public class GameWorld extends World
 		}
 	}
 	
-	public void throwGernade(int id, int x, int y, int rot) 
+	public void throwGernade(int id, float x, float y, float rot) 
 	{
 		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id, 50));
 	}

@@ -28,19 +28,23 @@ public class ClientProxy
 			msg = msg.substring("SHOOT|".length());
 			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			msg = msg.substring(msg.indexOf(',') + 1);
-			int shootRot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			float x = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			float y = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
+			msg = msg.substring(msg.indexOf(',') + 1);
+			float shootRot = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
 			
-			GameWorld.getInstance().netShoot(id, shootRot);
+			GameWorld.getInstance().netShoot(id, x, y, shootRot);
 		} else if (msg.startsWith("GERNADE"))
 		{
 			msg = msg.substring("GERNADE|".length());
 			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
 			msg = msg.substring(msg.indexOf(',') + 1);
-			int x = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			float x = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
 			msg = msg.substring(msg.indexOf(',') + 1);
-			int y = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			float y = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
 			msg = msg.substring(msg.indexOf(',') + 1);
-			int rot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			float rot = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
 			
 			GameWorld.getInstance().throwGernade(id, x, y, rot);
 		} else if (msg.startsWith("NEW_PLAYER|"))
@@ -104,9 +108,9 @@ public class ClientProxy
 		client.sendUDPMessage("POS|"+ID+","+x+","+y+","+rot+",");
 	}
 
-	public void shoot(int rot) 
+	public void shoot(float x, float y, float rot) 
 	{
-		client.sendTCPMessage("SHOOT|"+ID+","+rot+",");
+		client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
 
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
@@ -125,8 +129,8 @@ public class ClientProxy
 		return ID;
 	}
 	
-	public void throwGernade()
+	public void throwGernade(float x, float y, float dir)
 	{
-		client.sendTCPMessage("GERNADE|"+ID+",");
+		client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
 	}
 }

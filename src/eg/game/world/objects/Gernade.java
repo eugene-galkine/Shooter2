@@ -12,8 +12,9 @@ public class Gernade extends IUpdatable implements IDrawable
 {
 	private static final float speed = 30;
 	private static final float imgSize = 16;
+	private static final float SLOWDOWNRATE = 0.05f;
 	
-	private float x, y, mx, my, dir, timer;
+	private float x, y, mx, my, dir, timer, startTime;
 	private Image img;
 	private Rectangle rect;
 	private int ownerID;
@@ -27,6 +28,7 @@ public class Gernade extends IUpdatable implements IDrawable
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.ownerID = id;
 		this.timer = time;
+		this.startTime = time;
 		
 		img = new Image("images/bullets/gernade.png", imgSize, imgSize, true, true);
 		
@@ -68,6 +70,9 @@ public class Gernade extends IUpdatable implements IDrawable
 		//move in assigned direction
 		x += mx * delta;
 		y += my * delta;
+		
+		mx -= mx * SLOWDOWNRATE * delta;
+		my -= my * SLOWDOWNRATE * delta;
 		
 		rect.setX(x);
 		rect.setY(y);
@@ -142,14 +147,18 @@ public class Gernade extends IUpdatable implements IDrawable
 					
 					dir -= 45;
 					
-					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
-					this.my = (float) (Math.cos(Math.toRadians(dir)) * speed);
+					float nspeed = speed - ((startTime - timer) * (startTime/2) * SLOWDOWNRATE);
+					
+					System.out.println("speed="+speed+" nspeed="+nspeed);
+					
+					this.mx = (float) (Math.sin(Math.toRadians(dir)) * nspeed);
+					this.my = (float) (Math.cos(Math.toRadians(dir)) * nspeed);
 					dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
 					
 					dir += 45;
 					
-					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
-					this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
+					this.mx = (float) (Math.sin(Math.toRadians(dir)) * nspeed);
+					this.my = (float) -(Math.cos(Math.toRadians(dir)) * nspeed);
 				} else if (toRight || toLeft)
 					mx *= -1;
 				else if (above || bellow)

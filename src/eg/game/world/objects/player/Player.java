@@ -105,7 +105,7 @@ public class Player extends Person implements EventHandler<Event>
 			{
 				if (throwReleased)
 				{
-					GameWorld.getClient().throwGernade();
+					GameWorld.getClient().throwGernade(x,y,getRot());
 					throwReleased = false;
 				}
 				else if (!pressed)

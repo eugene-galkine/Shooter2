@@ -55,6 +55,6 @@ public class ParticleEmitter extends IUpdatable
 		int count = minObjs + r.nextInt(maxObjs - minObjs);
 		
 		for (int i = 0; i < count; i++)
-			GameWorld.getInstance().addObject(new Particle(x, y, dir + minDir + (r.nextFloat() * (maxDir - minDir)), minSpeed  + (r.nextFloat() * (maxSpeed - minSpeed)), minDuration + (r.nextFloat() * (maxDuration - minDuration)), minSize + (r.nextFloat() * (maxSize - minSize)), img[r.nextInt(10)]));
+			GameWorld.getInstance().addObject(new Particle(x, y, dir + minDir + (r.nextFloat() * (maxDir - minDir)), minSpeed  + (r.nextFloat() * (maxSpeed - minSpeed)), minDuration + (r.nextFloat() * (maxDuration - minDuration)), minSize + (r.nextFloat() * (maxSize - minSize)), img[r.nextInt(img.length)]));
 	}
 }

@@ -28,11 +28,11 @@ public class ParticleEmitterFactory
 		this.maxSize = maxSize;
 		
 		float sizeDif = maxSize - minSize;
-		sizeDif /= 10f;
-		img = new Image[10];
+		sizeDif /= 12f;
+		img = new Image[12];
 		
 		//images are loaded here to avoid loading at runtime which causes lag
-		for (int i = 0; i < 10; i++, minSize += sizeDif)
+		for (int i = 0; i < img.length; i++, minSize += sizeDif)
 			img[i] = new Image("images/particles/" + imageName + ".png", minSize, minSize, true, false);
 	}
 	
