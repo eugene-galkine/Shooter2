@@ -2,6 +2,7 @@ package eg.game.world;
 
 import java.util.LinkedList;
 
+import eg.game.Main;
 import eg.game.world.objects.interfaces.IDrawable;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
@@ -48,7 +49,7 @@ public class WorldDrawer extends AnimationTimer
 	public void handle(long arg0) 
 	{
 		//clear the screen
-		gc.clearRect(0, 0, 800, 800);
+		gc.clearRect(0, 0, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
 		
 		synchronized (objects) 
 		{

@@ -12,7 +12,7 @@ import eg.game.Control;
 public class Player extends Person implements EventHandler<Event>
 {	
 	private float movX, movY;
-	private boolean movLeft, movRight, movUp, movDown, isShooting;
+	private boolean movLeft, movRight, movUp, movDown, isShooting, throwReleased;
 	private int movSpeed = 25, health;
 	private Weapon weapon;
 	//private int ammo;
@@ -26,6 +26,8 @@ public class Player extends Person implements EventHandler<Event>
 		movRight = false;
 		movUp = false;
 		movDown = false;
+		
+		throwReleased = true;
 		
 		//set my weapon
 		weapon = Weapon.pistol;
@@ -49,8 +51,8 @@ public class Player extends Person implements EventHandler<Event>
 			
 			//look at mouse
 			setRot(180 + (float)Math.toDegrees(Math.atan2(
-					(getX()+IMG_WIDTH/2) - (mouse.getX() - (348 - getX())), 
-					(mouse.getY() - (348 - getY())) - (getY()+IMG_HEIGHT/2))));
+					(getX()+IMG_WIDTH/2) - (mouse.getX() - (Main.MAGIC_NUM - getX())), 
+					(mouse.getY() - (Main.MAGIC_NUM - getY())) - (getY()+IMG_HEIGHT/2))));
 			
 			//mouse event
 			switch (mouse.getEventType().getName())
@@ -73,7 +75,7 @@ public class Player extends Person implements EventHandler<Event>
 			boolean pressed = (key.getEventType().getName().equals("KEY_PRESSED"));
 			
 			boolean changed = false;
-			
+
 			//keyboard event
 			if (key.getCode() == Control.Leftward.getCode())
 			{
@@ -101,7 +103,13 @@ public class Player extends Person implements EventHandler<Event>
 				movUp = pressed;
 			} else if (key.getCode() == Control.Gernade.getCode())
 			{
-				GameWorld.getClient().throwGernade();
+				if (throwReleased)
+				{
+					GameWorld.getClient().throwGernade();
+					throwReleased = false;
+				}
+				else if (!pressed)
+					throwReleased = true;
 			} else if (key.getCode() == Control.Reload.getCode())
 			{
 				//TODO

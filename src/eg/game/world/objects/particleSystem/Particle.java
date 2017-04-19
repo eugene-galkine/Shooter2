@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 
 public class Particle extends IUpdatable implements IDrawable
 {
-	private float x, y, mx, my, duration;
+	private float x, y, mx, my, duration, dir;
 	private Image img;
 	
 	public Particle (float x, float y, float dir, float speed, float timer, float size, Image img)
@@ -17,6 +17,7 @@ public class Particle extends IUpdatable implements IDrawable
 		this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.duration = timer;
+		this.dir = dir;
 		
 		this.img = img;
 	}
@@ -27,6 +28,12 @@ public class Particle extends IUpdatable implements IDrawable
 		return img;
 	}
 
+	@Override
+	public float getRot()
+	{
+		return dir;
+	}
+	
 	@Override
 	public float getX()
 	{

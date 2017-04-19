@@ -24,20 +24,20 @@ public class Main extends Application
 	public void start(Stage stage) throws Exception
 	{
 		//JavaFX init
-		//pane = new AnchorPane();
-		//scene = new Scene(pane, WINDOW_HEIGHT, WINDOW_WIDTH);
 		Group root = new Group();
 		scene = new Scene(root);
 		stage.setResizable(false);
 		stage.setTitle("Shooter2");
 		stage.setScene(scene);
+		stage.setWidth(WINDOW_WIDTH);
+		stage.setHeight(WINDOW_HEIGHT);
 		stage.setFullScreen(FULLSCREEN);
 		
 		Canvas canvas = new Canvas( WINDOW_WIDTH, WINDOW_HEIGHT );
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		
 		root.getChildren().add( canvas );
 		stage.show();
-		
-		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		//TODO: changeState(new MainMenu(pane, scene, this));
 		changeState(new MpShooter(gc, scene, this));

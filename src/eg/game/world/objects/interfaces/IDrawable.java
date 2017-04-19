@@ -7,6 +7,7 @@ public interface IDrawable
 	public Image getImg();
 	public float getX();
 	public float getY();
+	
 	public default float getRot()
 	{
 		return 0;

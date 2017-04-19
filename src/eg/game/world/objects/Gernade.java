@@ -110,23 +110,26 @@ public class Gernade extends IUpdatable implements IDrawable
 				boolean bellow = false, above = false, toLeft = false, toRight = false;
 				
 				//find collision direction
-				rect.setX(oldX - 2);
+				rect.setX(oldX - 12);
 				rect.setY(oldY);
 				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					toLeft = true;
 				
-				rect.setX(oldX + 2);
+				rect.setX(oldX + 12);
 				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					toRight = true;
 				
 				rect.setX(oldX);
-				rect.setY(oldY - 2);
+				rect.setY(oldY - 12);
 				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					above = true;
 				
-				rect.setY(oldY + 2);
+				rect.setY(oldY + 12);
 				if (GameWorld.getInstance().collidesWith(obj, rect.getBoundsInParent()))
 					bellow = true;
+				
+				y = oldY;
+				x = oldX;
 				
 				if ((toRight && bellow) || (toLeft && above))
 				{
@@ -147,17 +150,13 @@ public class Gernade extends IUpdatable implements IDrawable
 					
 					this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 					this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
-					//(toRight && above)
 				} else if (toRight || toLeft)
-				{
 					mx *= -1;
-				} else if (above || bellow)
-				{
+				else if (above || bellow)
 					my *= -1;
-				}
 				
-				y = oldY;
-				x = oldX;
+				//dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
+				//System.out.println("mx="+mx+" my="+my+" dir="+dir+" above="+above+" bellow="+bellow+" toRight="+toRight+" toLeft="+toLeft);
 			}
 		}
 	}
