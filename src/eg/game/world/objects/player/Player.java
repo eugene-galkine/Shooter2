@@ -194,7 +194,13 @@ public class Player extends Person implements EventHandler<Event>
 
 	public void hit(int weaponID) 
 	{
-		health -= Weapon.getFromID(weaponID).getDamage();
+		takeDamage(Weapon.getFromID(weaponID).getDamage());
+	}
+	
+	public void takeDamage(int damage)
+	{
+		health -= damage;
+		System.out.println(health);
 		
 		if (health <= 0)
 		{

@@ -1,5 +1,7 @@
 package eg.game.world;
 
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
 
@@ -76,8 +78,8 @@ public abstract class World
 			IDrawable drawObj = (IDrawable)obj;
 			AffineTransform at = new AffineTransform();
 			at.rotate(Math.toRadians(drawObj.getRot()), drawObj.getX() + drawObj.getWidth() / 2, drawObj.getY() + drawObj.getHeight() / 2);
-			java.awt.Shape s = at.createTransformedShape(new java.awt.Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
-			if (s.intersects(new java.awt.Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
+			Shape s = at.createTransformedShape(new Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
+			if (s.intersects(new Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
 				return true;
 		}
 		

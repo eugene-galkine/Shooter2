@@ -7,6 +7,7 @@ import eg.game.world.objects.interfaces.ICollidable;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
 import eg.game.world.objects.particleSystem.ParticleEmitterFactory;
+import eg.game.world.objects.player.Player;
 
 public class Gernade extends IUpdatable implements IDrawable
 {
@@ -61,6 +62,13 @@ public class Gernade extends IUpdatable implements IDrawable
 		{
 			GameWorld.getInstance().removeObject(this);
 			ParticleEmitterFactory.Explosion.create(x, y, 0);
+			
+			//damage with explosion
+			Player p = GameWorld.getInstance().getPlayer();
+			int distance = (int)Math.sqrt(Math.pow(p.getX() - getX(), 2) + Math.pow(p.getY() - getY(), 2));
+			if (distance < 150)
+				p.takeDamage(150 - distance);
+			//System.out.println();
 			return;
 		}
 		
@@ -163,9 +171,6 @@ public class Gernade extends IUpdatable implements IDrawable
 					mx *= -1;
 				else if (above || bellow)
 					my *= -1;
-				
-				//dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
-				//System.out.println("mx="+mx+" my="+my+" dir="+dir+" above="+above+" bellow="+bellow+" toRight="+toRight+" toLeft="+toLeft);
 			}
 		}
 	}

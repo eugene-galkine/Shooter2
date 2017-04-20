@@ -46,7 +46,7 @@ public class Client implements Runnable
 			
 			//UDP
 			clientSocket = new DatagramSocket(socket.getLocalPort() + 1);
-	    	ServerAddress = InetAddress.getByName("localhost");
+	    	ServerAddress = InetAddress.getByName(ip);
 		    sendPacket = new DatagramPacket(sendData, sendData.length, ServerAddress, port + 1);
 		    new Thread(new UDPRecieve()).start();
 		} catch (UnknownHostException e) 

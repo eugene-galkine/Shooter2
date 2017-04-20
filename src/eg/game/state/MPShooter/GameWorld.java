@@ -159,4 +159,9 @@ public class GameWorld extends World
 	{
 		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id, 50));
 	}
+
+	public Player getPlayer() 
+	{
+		return ourPlayer;
+	}
 }
