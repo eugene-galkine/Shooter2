@@ -13,14 +13,15 @@ public class Gernade extends IUpdatable implements IDrawable
 {
 	private static final float speed = 30;
 	private static final float imgSize = 16;
-	private static final float SLOWDOWNRATE = 0.05f;
+	private static final float SLOWDOWNRATE = 0.04f;
+	private static final int MAX_DURATION = 20;
 	
 	private float x, y, mx, my, dir, timer, startTime;
 	private Image img;
 	private Rectangle rect;
 	private int ownerID;
 	
-	public Gernade (float x, float y, float dir, int id, float time)
+	public Gernade (float x, float y, float dir, int id)
 	{
 		this.x = x - (imgSize/2);
 		this.y = y - (imgSize/2);
@@ -28,8 +29,8 @@ public class Gernade extends IUpdatable implements IDrawable
 		this.mx = (float) (Math.sin(Math.toRadians(dir)) * speed);
 		this.my = (float) -(Math.cos(Math.toRadians(dir)) * speed);
 		this.ownerID = id;
-		this.timer = time;
-		this.startTime = time;
+		this.timer = MAX_DURATION;
+		this.startTime = MAX_DURATION;
 		
 		img = new Image("images/bullets/gernade.png", imgSize, imgSize, true, true);
 		

@@ -157,7 +157,7 @@ public class GameWorld extends World
 	
 	public void throwGernade(int id, float x, float y, float rot) 
 	{
-		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id, 50));
+		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id));
 	}
 
 	public Player getPlayer() 
