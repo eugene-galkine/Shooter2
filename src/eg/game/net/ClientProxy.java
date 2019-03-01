@@ -22,63 +22,77 @@ public class ClientProxy
 	void receivedTCPMessage(byte[] msg, int length)
 	{
 		//a new message was received over tcp
-		System.out.println("message from server tcp: " + msg);
-		if (msg.startsWith("SHOOT|"))
-		{
-			msg = msg.substring("SHOOT|".length());
-			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float x = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float y = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float shootRot = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
+		//System.out.println("message from server tcp: " + msg);
+		
+		int position = 1;
+		int id, iX, iY;
+		float x, y, shootRot, rot;
+		switch(msg[0]) {
+		case 0://shoot
+			id = parseInt(msg, position);
+			position += 4;
+			x = parseFloat(msg, position);
+			position += 4;
+			y = parseFloat(msg, position);
+			position += 4;
+			shootRot = parseFloat(msg, position);
 			
 			GameWorld.getInstance().netShoot(id, x, y, shootRot);
-		} else if (msg.startsWith("GERNADE"))
-		{
-			msg = msg.substring("GERNADE|".length());
-			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float x = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float y = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			float rot = Float.parseFloat(msg.substring(0, msg.indexOf(',')));
+			break;
+		case 1://grenade
+			id = parseInt(msg, position);
+			position += 4;
+			x = parseFloat(msg, position);
+			position += 4;
+			y = parseFloat(msg, position);
+			position += 4;
+			rot = parseFloat(msg, position);
 			
 			GameWorld.getInstance().throwGernade(id, x, y, rot);
-		} else if (msg.startsWith("NEW_PLAYER|"))
-		{
-			msg = msg.substring("NEW_PLAYER|".length());
-			GameWorld.getInstance().newPlayer(Integer.parseInt(msg));
+			break;
+		case 2://new player
+			GameWorld.getInstance().newPlayer(parseInt(msg, position));
+			break;
+		case 3://remove player
+			GameWorld.getInstance().removePlayer(parseInt(msg, position));
+			break;
+		case 4://spawn
+			iX = parseInt(msg, position);
+			position += 4;
+			iY = parseInt(msg, position);
+			position += 4;
+			int health = parseInt(msg, position);
 			
-		} else if (msg.startsWith("REMOVE_PLAYER|"))
-		{
-			msg = msg.substring("REMOVE_PLAYER|".length());
-			GameWorld.getInstance().removePlayer(Integer.parseInt(msg));
-			
-		} else if (msg.startsWith("SPAWN"))
-		{
-			msg = msg.substring("SPAWN|".length());
-			int x = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int y = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int health = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			
-			GameWorld.getInstance().spawnPlayer(x,y,health);
-			
-		} else if (msg.startsWith("REJECTED"))
-		{
+			GameWorld.getInstance().spawnPlayer(iX,iY,health);
+			break;
+		case 5://rejected
 			System.out.println("Server rejected connection");
 			//TODO rejected connection from server
-			
-		} else if (msg.startsWith("CONNECTED|"))
-		{
-			msg = msg.substring("CONNECTED|".length());
-			ID = Integer.parseInt(msg);
-			
+			break;
+		case 6://connected
+			ID = parseInt(msg, position);
+			break;
 		}
+	}
+	
+	private int parseInt(byte[] data, int pos) {
+		//TODO check for errors
+		int result = 0;
+		result |= data[pos] << 24;
+		result |= (data[pos + 1] & 0xff) << 16;
+		result |= (data[pos + 2] & 0xff) << 8;
+		result |= (data[pos + 3] & 0xff);
+		
+		return result;
+	}
+	
+	private float parseFloat(byte[] data, int pos) {
+		//TODO check for errors
+		return Float.intBitsToFloat(
+				data[pos] << 24 |
+				(data[pos + 1] & 0xff) << 16 |
+				(data[pos + 2] & 0xff) << 8 |
+				(data[pos + 3] & 0xff));
 	}
 	
 	//package wide access
@@ -105,23 +119,23 @@ public class ClientProxy
 	
 	public void updatePlayerPos(int x, int y, int rot)
 	{
-		client.sendUDPMessage("POS|"+ID+","+x+","+y+","+rot+",");
+		client.sendUDPMessage("POS|"+ID+","+x+","+y+","+rot+",");//TODO
 	}
 
 	public void shoot(float x, float y, float rot) 
 	{
-		client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
+		client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");//TODO
 	}
 
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
 	{
-		client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
+		client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");//TODO
 		//System.out.println("player " + targetID + " took damage from " + ownerID + " (ClientProxy)");
 	}
 	
 	public void dead() 
 	{
-		client.sendTCPMessage("DEAD|,");
+		client.sendTCPMessage("DEAD|,");//TODO
 	}
 	
 	public int getID() 
@@ -131,6 +145,6 @@ public class ClientProxy
 	
 	public void throwGernade(float x, float y, float dir)
 	{
-		client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
+		client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");//TODO
 	}
 }
