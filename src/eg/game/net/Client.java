@@ -3,6 +3,7 @@ package eg.game.net;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -63,16 +64,17 @@ public class Client implements Runnable
 	@Override
 	public void run() 
 	{
-		BufferedReader inFromServer;
+		InputStream inFromServer;
 		
 		try 
 		{
-			inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			inFromServer = socket.getInputStream();
 			
 			//loop to reciece tcp messages
-			String in;
-			while (!socket.isClosed() && (in = inFromServer.readLine()) != null)
-				clientProxy.receivedTCPMessage(in);
+			byte[] data = new byte[256];//TODO size
+			int dataLen;
+			while (!socket.isClosed() && (dataLen = inFromServer.read(data)) != -1)
+				clientProxy.receivedTCPMessage(data, dataLen);
 			
 			inFromServer.close();
 		} catch (IOException e) 

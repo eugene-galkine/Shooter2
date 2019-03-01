@@ -19,7 +19,7 @@ public class ClientProxy
 	}
 	
 	//package wide access
-	void receivedTCPMessage(String msg)
+	void receivedTCPMessage(byte[] msg, int length)
 	{
 		//a new message was received over tcp
 		System.out.println("message from server tcp: " + msg);
