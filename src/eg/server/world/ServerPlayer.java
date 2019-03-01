@@ -7,7 +7,8 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 
 import eg.game.world.objects.player.Weapon;
-import eg.server.Server;
+import eg.server.net.Server;
+import eg.server.net.UDPServer;
 import eg.server.world.ServerWorld.MsgType;
 
 public class ServerPlayer 
@@ -21,7 +22,7 @@ public class ServerPlayer
 	private byte[] sendData;
 	private DatagramSocket clientSocket;
 	//private long lastUpdated;
-	private int x, y, rot, weaponID, health, killer;
+	private int x, y, rot, weaponID, health, killer;//TODO
 	private float fx, fy, fRot;
 	private volatile boolean dead;
 	private Object lockObj;
@@ -30,7 +31,7 @@ public class ServerPlayer
 	{
 		this.socket = inSocket;
 		this.id = inID;
-		this.sendData = new byte[Server.PACKET_SIZE];
+		this.sendData = new byte[UDPServer.PACKET_SIZE];
 		//this.lastUpdated = System.currentTimeMillis();
 		this.x = 348;
 		this.y = 348;

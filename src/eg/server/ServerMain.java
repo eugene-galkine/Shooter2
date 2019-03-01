@@ -1,5 +1,7 @@
 package eg.server;
 
+import eg.server.net.Server;
+
 
 public class ServerMain 
 {	
