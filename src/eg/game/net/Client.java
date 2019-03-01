@@ -1,10 +1,8 @@
 package eg.game.net;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -131,7 +129,7 @@ public class Client implements Runnable
 				try 
 				{
 					clientSocket.receive(receivePacket);
-					clientProxy.receivedUDPMessage(new String(receivePacket.getData()).trim());
+					clientProxy.receivedUDPMessage(receivePacket.getData(), receivePacket.getLength());
 				} catch (IOException e) 
 				{
 					e.printStackTrace();

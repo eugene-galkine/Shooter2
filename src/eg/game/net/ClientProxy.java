@@ -19,7 +19,7 @@ public class ClientProxy
 	}
 	
 	//package wide access
-	void receivedTCPMessage(byte[] msg, int length)
+	void receivedTCPMessage(byte[] msg, int length)//TODO use length
 	{
 		//a new message was received over tcp
 		//System.out.println("message from server tcp: " + msg);
@@ -96,24 +96,26 @@ public class ClientProxy
 	}
 	
 	//package wide access
-	void receivedUDPMessage(String msg)
+	void receivedUDPMessage(byte[] msg, int length)
 	{
 		//a new message was received over udp
 		//System.out.println("message from server udp: " + msg);
 		
-		if (msg.startsWith("UPD|"))
-		{
+		int position = 1;
+		int id, x, y, rot;
+		switch(msg[0]) {
+		case 0:
 			//update position
-			msg = msg.substring("UPD|".length());
-			int id = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int x = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int y = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
-			msg = msg.substring(msg.indexOf(',') + 1);
-			int rot = Integer.parseInt(msg.substring(0, msg.indexOf(',')));
+			id = parseInt(msg, position);
+			position += 4;
+			x = parseInt(msg, position);
+			position += 4;
+			y = parseInt(msg, position);
+			position += 4;
+			rot = parseInt(msg, position);
 			
 			GameWorld.getInstance().updatePlayer(id, x, y, rot);
+			break;
 		}
 	}
 	
