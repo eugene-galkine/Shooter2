@@ -1,8 +1,8 @@
 package eg.game.net;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -14,7 +14,7 @@ public class Client implements Runnable
 	private static final int PACKET_SIZE = 24;
 	
 	private Socket socket;
-	private DataOutputStream outToServer;
+	private OutputStream outToServer;
 	private byte[] sendData;
     private byte[] receiveData;
     private DatagramSocket clientSocket;
@@ -41,7 +41,7 @@ public class Client implements Runnable
 			//TCP
 			socket = new Socket(ip, port);
 			socket.setTcpNoDelay(true);
-			outToServer = new DataOutputStream(socket.getOutputStream());
+			outToServer = socket.getOutputStream();
 			
 			//UDP
 			clientSocket = new DatagramSocket(socket.getLocalPort() + 1);
@@ -82,12 +82,13 @@ public class Client implements Runnable
 	}
 
 	//package wide access
-	void sendTCPMessage(String msg)
+	void sendTCPMessage(byte[] msg, int length)
 	{
 		//send a message over tcp
 		try 
 		{
-			outToServer.write((msg + '\n').getBytes());
+			outToServer.write(msg, 0, length);
+			outToServer.flush();
 		} catch (IOException e) 
 		{
 			e.printStackTrace();
@@ -95,15 +96,12 @@ public class Client implements Runnable
 	}
 	
 	//package wide access
-	void sendUDPMessage(String msg)
+	void sendUDPMessage(byte[] msg, int length)
 	{
 		//send a message over udp
 	    try 
 	    {
-	    	sendData = null;
-	    	sendData = msg.getBytes();
-	    	
-	    	sendPacket.setData(sendData);
+	    	sendPacket.setData(msg, 0, length);
 			clientSocket.send(sendPacket);
 		} catch (IOException e) 
 	    {
