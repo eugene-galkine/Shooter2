@@ -5,7 +5,7 @@ import eg.game.state.mpShooter.GameWorld;
 
 public class ParticleEmitterFactory
 {
-	public static final ParticleEmitterFactory Explosion = new ParticleEmitterFactory(3, 6, 3, 4, 8, 0, 360, 6, 17, 20, 80, "explosion");
+	public static final ParticleEmitterFactory Explosion = new ParticleEmitterFactory(3, 6, 3, 4, 6, 0, 360, 6, 17, 20, 80, "explosion");
 	public static final ParticleEmitterFactory Blood = new ParticleEmitterFactory(6, 10, 0, 10, 18, -30, 30, 3, 8, 4, 10, "blood");
 	
 	private float emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize;
