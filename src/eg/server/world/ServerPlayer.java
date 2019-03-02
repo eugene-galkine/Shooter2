@@ -1,7 +1,7 @@
 package eg.server.world;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
@@ -10,7 +10,6 @@ import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
 import eg.server.net.UDPServer;
 import eg.server.world.ServerWorld.MsgType;
-
 import static eg.utils.GlobalConstants.*;
 import static eg.utils.ByteArrayUtils.*;
 
@@ -20,7 +19,7 @@ public class ServerPlayer
 	
 	private Socket socket;
 	private int id;
-	private DataOutputStream outToClient;
+	private OutputStream outToClient;
 	private DatagramPacket udpPacket;
 	private byte[] sendData;
 	private DatagramSocket clientSocket;
@@ -47,14 +46,18 @@ public class ServerPlayer
 		
 		try 
 		{
-			outToClient = new DataOutputStream(socket.getOutputStream());
+			outToClient = socket.getOutputStream();
 			udpPacket = new DatagramPacket(sendData, sendData.length, socket.getInetAddress(), socket.getPort()+1);
 			clientSocket = new DatagramSocket();
 			
-			if (inID != -1)
-				sendTCPMessage("CONNECTED|"+id);
-			else
-				sendTCPMessage("REJECTED");
+			if (inID != -1) {
+				byte[] data = new byte[5];
+				data[0] = TCP_CMD_CONNECTED;
+				data = appendInt(data, 1, id);
+				sendTCPMessage(data, 5);
+			} else {
+				sendTCPMessage(new byte[]{TCP_CMD_REJECTED}, 1);
+			}
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -222,11 +225,11 @@ public class ServerPlayer
 	 * network functions
 	 */
 	
-	void sendTCPMessage(String in) 
+	void sendTCPMessage(byte[] data, int length) 
 	{
 		try 
 		{
-			outToClient.write((in+'\n').getBytes());//TODO move to TCPConnection
+			outToClient.write(data, 0, length);//TODO move to TCPConnection
 		} catch (IOException e)
 		{
 			e.printStackTrace();
