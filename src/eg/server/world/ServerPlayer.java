@@ -249,8 +249,9 @@ public class ServerPlayer
 	public void receiveTCPMessage(byte[] data, int len) 
 	{
 		//TODO
-//		try
-//		{
+		try
+		{
+			
 //			if (in.startsWith("HIT"))
 //			{
 //				hitBullet(in.substring(in.indexOf('|') + 1));
@@ -264,11 +265,12 @@ public class ServerPlayer
 //			{
 //				throwGernade(in.substring(in.indexOf('|') + 1));
 //			}
-//		} catch (Exception e)
-//		{
-//			System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
-//			//don't crash
-//		}
+		} catch (Exception e)
+		{
+			//TODO print error
+			//System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
+			//don't crash
+		}
 	}
 	
 	public void receiveUDPMessage(byte[] data, int index) {

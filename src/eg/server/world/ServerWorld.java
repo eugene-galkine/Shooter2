@@ -1,6 +1,5 @@
 package eg.server.world;
 
-import java.net.DatagramPacket;
 import java.net.Socket;
 
 import eg.utils.ByteArrayUtils;
@@ -149,7 +148,7 @@ public class ServerWorld
 			//in case it's not a valid number
 			player = players[index];
 		} catch (Exception e) {
-			System.out.println("bad udp message: " + index);
+			System.out.println("invalid id in udp message: " + index);
 		}
 		
 		if (player != null)
