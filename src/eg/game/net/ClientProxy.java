@@ -1,18 +1,12 @@
 package eg.game.net;
 
 import eg.game.state.mpShooter.GameWorld;
-import eg.utils.ByteArrayUtils;
+
+import static eg.utils.GlobalConstants.*;
+import static eg.utils.ByteArrayUtils.*;
 
 public class ClientProxy 
 {
-	private static final byte TCP_CMD_SHOOT = 0;
-	private static final byte TCP_CMD_GRENADE = 1;
-	private static final byte TCP_CMD_NEW_PLAYER = 2;
-	private static final byte TCP_CMD_REMOVE_PLAYER = 3;
-	private static final byte TCP_CMD_SPAWN = 4;
-	private static final byte TCP_CMD_REJECTED = 5;
-	private static final byte TCP_CMD_CONNECTED = 6;
-	
 	private Client client;
 	private int ID;
 	
@@ -38,39 +32,39 @@ public class ClientProxy
 		float x, y, shootRot, rot;
 		switch(msg[0]) {
 		case TCP_CMD_SHOOT://shoot
-			id = ByteArrayUtils.parseInt(msg, position);
+			id = parseInt(msg, position);
 			position += 4;
-			x = ByteArrayUtils.parseFloat(msg, position);
+			x = parseFloat(msg, position);
 			position += 4;
-			y = ByteArrayUtils.parseFloat(msg, position);
+			y = parseFloat(msg, position);
 			position += 4;
-			shootRot = ByteArrayUtils.parseFloat(msg, position);
+			shootRot = parseFloat(msg, position);
 			
 			GameWorld.getInstance().netShoot(id, x, y, shootRot);
 			break;
 		case TCP_CMD_GRENADE://grenade
-			id = ByteArrayUtils.parseInt(msg, position);
+			id = parseInt(msg, position);
 			position += 4;
-			x = ByteArrayUtils.parseFloat(msg, position);
+			x = parseFloat(msg, position);
 			position += 4;
-			y = ByteArrayUtils.parseFloat(msg, position);
+			y = parseFloat(msg, position);
 			position += 4;
-			rot = ByteArrayUtils.parseFloat(msg, position);
+			rot = parseFloat(msg, position);
 			
 			GameWorld.getInstance().throwGernade(id, x, y, rot);
 			break;
 		case TCP_CMD_NEW_PLAYER://new player
-			GameWorld.getInstance().newPlayer(ByteArrayUtils.parseInt(msg, position));
+			GameWorld.getInstance().newPlayer(parseInt(msg, position));
 			break;
 		case TCP_CMD_REMOVE_PLAYER://remove player
-			GameWorld.getInstance().removePlayer(ByteArrayUtils.parseInt(msg, position));
+			GameWorld.getInstance().removePlayer(parseInt(msg, position));
 			break;
 		case TCP_CMD_SPAWN://spawn
-			iX = ByteArrayUtils.parseInt(msg, position);
+			iX = parseInt(msg, position);
 			position += 4;
-			iY = ByteArrayUtils.parseInt(msg, position);
+			iY = parseInt(msg, position);
 			position += 4;
-			int health = ByteArrayUtils.parseInt(msg, position);
+			int health = parseInt(msg, position);
 			
 			GameWorld.getInstance().spawnPlayer(iX,iY,health);
 			break;
@@ -79,7 +73,7 @@ public class ClientProxy
 			//TODO rejected connection from server
 			break;
 		case TCP_CMD_CONNECTED://connected
-			ID = ByteArrayUtils.parseInt(msg, position);
+			ID = parseInt(msg, position);
 			break;
 		}
 	}
@@ -100,13 +94,13 @@ public class ClientProxy
 		switch(msg[0]) {
 		case 0:
 			//update position
-			id = ByteArrayUtils.parseInt(msg, position);
+			id = parseInt(msg, position);
 			position += 4;
-			x = ByteArrayUtils.parseInt(msg, position);
+			x = parseInt(msg, position);
 			position += 4;
-			y = ByteArrayUtils.parseInt(msg, position);
+			y = parseInt(msg, position);
 			position += 4;
-			rot = ByteArrayUtils.parseInt(msg, position);
+			rot = parseInt(msg, position);
 			
 			GameWorld.getInstance().updatePlayer(id, x, y, rot);
 			break;
@@ -116,11 +110,11 @@ public class ClientProxy
 	public void updatePlayerPos(int x, int y, int rot)
 	{
 		byte[] data = new byte[4 + 1 + 4 + 4 + 4];
-		data = ByteArrayUtils.appendInt(data, 0, ID);
+		data = appendInt(data, 0, ID);
 		data[4] = 0;
-		data = ByteArrayUtils.appendInt(data, 5, x);
-		data = ByteArrayUtils.appendInt(data, 9, y);
-		data = ByteArrayUtils.appendInt(data, 13, rot);
+		data = appendInt(data, 5, x);
+		data = appendInt(data, 9, y);
+		data = appendInt(data, 13, rot);
 		
 		client.sendUDPMessage(data, data.length);
 		//"POS|"+ID+","+x+","+y+","+rot+",");
@@ -130,9 +124,9 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1 + 4 + 4 + 4];
 		data[0] = TCP_CMD_SHOOT;//TODO
-		data = ByteArrayUtils.appendFloat(data, 1, x);
-		data = ByteArrayUtils.appendFloat(data, 5, y);
-		data = ByteArrayUtils.appendFloat(data, 9, rot);
+		data = appendFloat(data, 1, x);
+		data = appendFloat(data, 5, y);
+		data = appendFloat(data, 9, rot);
 		
 		client.sendTCPMessage(data, data.length);
 		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
@@ -142,8 +136,8 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1 + 4 + 4];
 		data[0] = 1;//TODO
-		data = ByteArrayUtils.appendInt(data, 1, ownerID);
-		data = ByteArrayUtils.appendInt(data, 5, weaponID);
+		data = appendInt(data, 1, ownerID);
+		data = appendInt(data, 5, weaponID);
 		
 		client.sendTCPMessage(data, data.length);
 		//client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
@@ -163,9 +157,9 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1];
 		data[0] = 3;//TODO
-		data = ByteArrayUtils.appendFloat(data, 1, x);
-		data = ByteArrayUtils.appendFloat(data, 5, y);
-		data = ByteArrayUtils.appendFloat(data, 9, dir);;
+		data = appendFloat(data, 1, x);
+		data = appendFloat(data, 5, y);
+		data = appendFloat(data, 9, dir);;
 		
 		client.sendTCPMessage(data, data.length);
 		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");

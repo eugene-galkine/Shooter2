@@ -34,7 +34,7 @@ public class ServerPlayer
 		this.id = inID;
 		this.sendData = new byte[UDPServer.PACKET_SIZE];
 		//this.lastUpdated = System.currentTimeMillis();
-		this.x = 348;
+		this.x = 348;//TODO spawn
 		this.y = 348;
 		this.rot = 0;
 		this.weaponID = 0;
