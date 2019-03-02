@@ -123,7 +123,7 @@ public class ClientProxy
 	public void shoot(float x, float y, float rot) 
 	{
 		byte[] data = new byte[1 + 4 + 4 + 4];
-		data[0] = TCP_CMD_SHOOT;//TODO
+		data[0] = TCP_CMD_SHOOT;
 		data = appendFloat(data, 1, x);
 		data = appendFloat(data, 5, y);
 		data = appendFloat(data, 9, rot);
@@ -132,10 +132,22 @@ public class ClientProxy
 		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
 
+	public void throwGernade(float x, float y, float dir)
+	{
+		byte[] data = new byte[1];
+		data[0] = TCP_CMD_GRENADE;
+		data = appendFloat(data, 1, x);
+		data = appendFloat(data, 5, y);
+		data = appendFloat(data, 9, dir);;
+		
+		client.sendTCPMessage(data, data.length);
+		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
+	}
+	
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
 	{
 		byte[] data = new byte[1 + 4 + 4];
-		data[0] = 1;//TODO
+		data[0] = TCP_CMD_HIT;
 		data = appendInt(data, 1, ownerID);
 		data = appendInt(data, 5, weaponID);
 		
@@ -147,21 +159,9 @@ public class ClientProxy
 	public void dead() 
 	{
 		byte[] data = new byte[1];
-		data[0] = 2;//TODO
+		data[0] = TCP_CMD_DEAD;
 		
 		client.sendTCPMessage(data, data.length);
 		//client.sendTCPMessage("DEAD|,");
-	}
-	
-	public void throwGernade(float x, float y, float dir)
-	{
-		byte[] data = new byte[1];
-		data[0] = 3;//TODO
-		data = appendFloat(data, 1, x);
-		data = appendFloat(data, 5, y);
-		data = appendFloat(data, 9, dir);;
-		
-		client.sendTCPMessage(data, data.length);
-		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
 	}
 }

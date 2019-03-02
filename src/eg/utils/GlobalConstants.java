@@ -8,4 +8,6 @@ public class GlobalConstants {
 	public static final byte TCP_CMD_SPAWN = 4;
 	public static final byte TCP_CMD_REJECTED = 5;
 	public static final byte TCP_CMD_CONNECTED = 6;
+	public static final byte TCP_CMD_HIT = 7;
+	public static final byte TCP_CMD_DEAD = 8;
 }

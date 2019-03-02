@@ -10,7 +10,9 @@ import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
 import eg.server.net.UDPServer;
 import eg.server.world.ServerWorld.MsgType;
-import eg.utils.ByteArrayUtils;
+
+import static eg.utils.GlobalConstants.*;
+import static eg.utils.ByteArrayUtils.*;
 
 public class ServerPlayer 
 {
@@ -24,7 +26,7 @@ public class ServerPlayer
 	private DatagramSocket clientSocket;
 	//private long lastUpdated;
 	private int x, y, rot, weaponID, health, killer;//TODO
-	private float fx, fy, fRot;
+	private float fx, fy, fRot;//TODO look into this
 	private volatile boolean dead;
 	private Object lockObj;
 	
@@ -115,11 +117,11 @@ public class ServerPlayer
 	private void updatePlayerPos(byte[] data, int index) 
 	{
 		//parse the new position
-		int inX = ByteArrayUtils.parseInt(data, index);
+		int inX = parseInt(data, index);
 		index += 4;
-		int inY = ByteArrayUtils.parseInt(data, index);
+		int inY = parseInt(data, index);
 		index += 4;
-		int inRot = ByteArrayUtils.parseInt(data, index);
+		int inRot = parseInt(data, index);
 		
 		//find the delta and update last updated time
 		//float delta = (System.currentTimeMillis() - lastUpdated) / 100f;
@@ -138,34 +140,34 @@ public class ServerPlayer
 		Server.getWorld().sendToAll(MsgType.UPDATE_POS, this, true);
 	}
 	
-	private void shootBullet(String substring) 
+	private void shootBullet(byte[] data, int index) 
 	{
 		//shootRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		fx = parseFloat(data, index);
+		index += 4;
+		fy = parseFloat(data, index);
+		index += 4;
+		fRot = parseFloat(data, index);
 		
 		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
 	}
 	
-	private void throwGernade(String substring)
+	private void throwGernade(byte[] data, int index)
 	{
-		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		fx = parseFloat(data, index);
+		index += 4;
+		fy = parseFloat(data, index);
+		index += 4;
+		fRot = parseFloat(data, index);
 		
 		Server.getWorld().sendToAll(MsgType.THROW_GERNADE, this, false);
 	}
 	
-	private void hitBullet(String substring) 
+	private void hitBullet(byte[] data, int index) 
 	{
-		int bulletID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int weaponID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		int bulletID = parseInt(data, index);
+		index += 4;
+		int weaponID = parseInt(data, index);
 		int damage = Weapon.getFromID(weaponID).getDamage();
 		
 		health -= damage;
@@ -248,23 +250,23 @@ public class ServerPlayer
 	
 	public void receiveTCPMessage(byte[] data, int len) 
 	{
-		//TODO
 		try
 		{
-			
-//			if (in.startsWith("HIT"))
-//			{
-//				hitBullet(in.substring(in.indexOf('|') + 1));
-//			} else if (in.startsWith("DEAD"))
-//			{
-//				die();
-//			}  else if (in.startsWith("SHOOT"))
-//			{
-//				shootBullet(in.substring(in.indexOf('|') + 1));
-//			} else if (in.startsWith("GERNADE"))
-//			{
-//				throwGernade(in.substring(in.indexOf('|') + 1));
-//			}
+			int index = 0;
+			switch(data[index++]) {
+			case TCP_CMD_SHOOT:
+				shootBullet(data, index);
+				break;
+			case TCP_CMD_GRENADE:
+				throwGernade(data, index);
+				break;
+			case TCP_CMD_HIT:
+				hitBullet(data, index);
+				break;
+			case TCP_CMD_DEAD:
+				die();
+				break;
+			}
 		} catch (Exception e)
 		{
 			//TODO print error
@@ -283,7 +285,7 @@ public class ServerPlayer
 			}
 		} catch (Exception e)
 		{
-			//TODO print erroor 
+			//TODO print error 
 			//System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
