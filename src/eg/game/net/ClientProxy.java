@@ -4,6 +4,18 @@ import eg.game.state.mpShooter.GameWorld;
 
 public class ClientProxy 
 {
+	
+	
+	private static final byte CMD_SHOOT = 0;
+	private static final byte CMD_GRENADE = 1;
+	private static final byte CMD_NEW_PLAYER = 2;
+	private static final byte CMD_REMOVE_PLAYER = 3;
+	private static final byte CMD_SPAWN = 4;
+	private static final byte CMD_REJECTED = 5;
+	private static final byte CMD_CONNECTED = 6;
+	
+	
+	
 	private Client client;
 	private int ID;
 	
@@ -28,7 +40,7 @@ public class ClientProxy
 		int id, iX, iY;
 		float x, y, shootRot, rot;
 		switch(msg[0]) {
-		case 0://shoot
+		case CMD_SHOOT://shoot
 			id = parseInt(msg, position);
 			position += 4;
 			x = parseFloat(msg, position);
@@ -39,7 +51,7 @@ public class ClientProxy
 			
 			GameWorld.getInstance().netShoot(id, x, y, shootRot);
 			break;
-		case 1://grenade
+		case CMD_GRENADE://grenade
 			id = parseInt(msg, position);
 			position += 4;
 			x = parseFloat(msg, position);
@@ -50,13 +62,13 @@ public class ClientProxy
 			
 			GameWorld.getInstance().throwGernade(id, x, y, rot);
 			break;
-		case 2://new player
+		case CMD_NEW_PLAYER://new player
 			GameWorld.getInstance().newPlayer(parseInt(msg, position));
 			break;
-		case 3://remove player
+		case CMD_REMOVE_PLAYER://remove player
 			GameWorld.getInstance().removePlayer(parseInt(msg, position));
 			break;
-		case 4://spawn
+		case CMD_SPAWN://spawn
 			iX = parseInt(msg, position);
 			position += 4;
 			iY = parseInt(msg, position);
@@ -65,11 +77,11 @@ public class ClientProxy
 			
 			GameWorld.getInstance().spawnPlayer(iX,iY,health);
 			break;
-		case 5://rejected
+		case CMD_REJECTED://rejected
 			System.out.println("Server rejected connection");
 			//TODO rejected connection from server
 			break;
-		case 6://connected
+		case CMD_CONNECTED://connected
 			ID = parseInt(msg, position);
 			break;
 		}
@@ -93,6 +105,30 @@ public class ClientProxy
 				(data[pos + 1] & 0xff) << 16 |
 				(data[pos + 2] & 0xff) << 8 |
 				(data[pos + 3] & 0xff));
+	}
+	
+	private byte[] appendInt(byte[] data, int index, int msg) {	
+		data[index] = (byte)(msg >> 0);
+		data[index + 1] = (byte)(msg >> 8);
+		data[index + 2] = (byte)(msg >> 16);
+		data[index + 3] = (byte)(msg >> 24);
+		
+		return data;
+	}
+	
+	private byte[] appendFloat(byte[] data, int index, float msg) {	
+		int converted = Float.floatToIntBits(msg);
+		data[index] = (byte)(converted >> 0);
+		data[index + 1] = (byte)(converted >> 8);
+		data[index + 2] = (byte)(converted >> 16);
+		data[index + 3] = (byte)(converted >> 24);
+		
+		return data;
+	}
+	
+	public int getID() 
+	{
+		return ID;
 	}
 	
 	//package wide access
@@ -121,32 +157,59 @@ public class ClientProxy
 	
 	public void updatePlayerPos(int x, int y, int rot)
 	{
-		client.sendUDPMessage("POS|"+ID+","+x+","+y+","+rot+",");//TODO
+		byte[] data = new byte[1 + 4 + 4 + 4 + 4];
+		data[0] = 0;
+		data = appendInt(data, 4, ID);
+		data = appendInt(data, 8, x);
+		data = appendInt(data, 12, y);
+		data = appendInt(data, 16, rot);
+		
+		client.sendUDPMessage(data, data.length);
+		//"POS|"+ID+","+x+","+y+","+rot+",");
 	}
 
 	public void shoot(float x, float y, float rot) 
 	{
-		client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");//TODO
+		byte[] data = new byte[1 + 4 + 4 + 4];
+		data[0] = 1;
+		data = appendFloat(data, 4, x);
+		data = appendFloat(data, 8, y);
+		data = appendFloat(data, 12, rot);
+		
+		client.sendUDPMessage(data, data.length);
+		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
 
 	public void bulletHit(int targetID, int ownerID, int weaponID) 
 	{
-		client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");//TODO
+		byte[] data = new byte[1 + 4 + 4];
+		data[0] = 2;
+		data = appendInt(data, 4, ownerID);
+		data = appendInt(data, 8, weaponID);
+		
+		client.sendUDPMessage(data, data.length);
+		//client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
 		//System.out.println("player " + targetID + " took damage from " + ownerID + " (ClientProxy)");
 	}
 	
 	public void dead() 
 	{
-		client.sendTCPMessage("DEAD|,");//TODO
-	}
-	
-	public int getID() 
-	{
-		return ID;
+		byte[] data = new byte[1];
+		data[0] = 3;
+		
+		client.sendUDPMessage(data, data.length);
+		//client.sendTCPMessage("DEAD|,");
 	}
 	
 	public void throwGernade(float x, float y, float dir)
 	{
-		client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");//TODO
+		byte[] data = new byte[1];
+		data[0] = 4;
+		data = appendFloat(data, 4, x);
+		data = appendFloat(data, 8, y);
+		data = appendFloat(data, 12, dir);;
+		
+		client.sendUDPMessage(data, data.length);
+		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
 	}
 }
