@@ -10,6 +10,7 @@ import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
 import eg.server.net.UDPServer;
 import eg.server.world.ServerWorld.MsgType;
+import eg.utils.ByteArrayUtils;
 
 public class ServerPlayer 
 {
@@ -111,14 +112,14 @@ public class ServerPlayer
 	 * net event functions
 	 */
 	
-	private void updatePlayerPos(String substring) 
+	private void updatePlayerPos(byte[] data, int index) 
 	{
 		//parse the new position
-		int inX = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int inY = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int inRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		int inX = ByteArrayUtils.parseInt(data, index);
+		index += 4;
+		int inY = ByteArrayUtils.parseInt(data, index);
+		index += 4;
+		int inRot = ByteArrayUtils.parseInt(data, index);
 		
 		//find the delta and update last updated time
 		//float delta = (System.currentTimeMillis() - lastUpdated) / 100f;
@@ -223,7 +224,7 @@ public class ServerPlayer
 	{
 		try 
 		{
-			outToClient.write((in+'\n').getBytes());
+			outToClient.write((in+'\n').getBytes());//TODO move to TCPConnection
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -237,7 +238,7 @@ public class ServerPlayer
 	    {
 	    	sendData = null;
 	    	sendData = msg.getBytes();
-	    	udpPacket.setData(sendData);
+	    	udpPacket.setData(sendData);//TODO move to UDPConnection
 			clientSocket.send(udpPacket);
 		} catch (IOException e) 
 	    {
@@ -245,41 +246,43 @@ public class ServerPlayer
 		}
 	}
 	
-	public void receiveTCPMessage(String in) 
+	public void receiveTCPMessage(byte[] data, int len) 
 	{
-		try
-		{
-			if (in.startsWith("HIT"))
-			{
-				hitBullet(in.substring(in.indexOf('|') + 1));
-			} else if (in.startsWith("DEAD"))
-			{
-				die();
-			}  else if (in.startsWith("SHOOT"))
-			{
-				shootBullet(in.substring(in.indexOf('|') + 1));
-			} else if (in.startsWith("GERNADE"))
-			{
-				throwGernade(in.substring(in.indexOf('|') + 1));
-			}
-		} catch (Exception e)
-		{
-			System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
-			//don't crash
-		}
+		//TODO
+//		try
+//		{
+//			if (in.startsWith("HIT"))
+//			{
+//				hitBullet(in.substring(in.indexOf('|') + 1));
+//			} else if (in.startsWith("DEAD"))
+//			{
+//				die();
+//			}  else if (in.startsWith("SHOOT"))
+//			{
+//				shootBullet(in.substring(in.indexOf('|') + 1));
+//			} else if (in.startsWith("GERNADE"))
+//			{
+//				throwGernade(in.substring(in.indexOf('|') + 1));
+//			}
+//		} catch (Exception e)
+//		{
+//			System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
+//			//don't crash
+//		}
 	}
 	
-	public void receiveUDPMessage(String in) 
-	{
+	public void receiveUDPMessage(byte[] data, int index) {
 		try
 		{
-			if (in.startsWith("POS"))
-			{
-				updatePlayerPos(in.substring(in.indexOf('|') + 3));
+			switch (data[index++]) {
+			case 0://update position
+				updatePlayerPos(data, index);
+				break;
 			}
 		} catch (Exception e)
 		{
-			System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
+			//TODO print erroor 
+			//System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
 	}

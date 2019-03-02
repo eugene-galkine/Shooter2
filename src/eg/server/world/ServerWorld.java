@@ -3,6 +3,8 @@ package eg.server.world;
 import java.net.DatagramPacket;
 import java.net.Socket;
 
+import eg.utils.ByteArrayUtils;
+
 public class ServerWorld 
 {
 	private static final int MAX_PLAYERS = 8;
@@ -139,25 +141,19 @@ public class ServerWorld
 		}
 	}
 	
-	public void receiveUDPMessage(DatagramPacket receivePacket) 
-	{
-		String msg = new String(receivePacket.getData()).trim();
-		//System.out.println("NEW UDP MSG: " + msg);
-		
+	public void receiveUDPMessage(byte[] data) {
 		//get player ID from message
-		int index = msg.indexOf('|') + 1;
+		int index = ByteArrayUtils.parseInt(data, 0);
 		ServerPlayer player = null;
-		try
-		{
-			//incase it's not a valid number
-			player = players[Integer.parseInt(msg.substring(index, index + 1))];
-		} catch (Exception e)
-		{
+		try {
+			//in case it's not a valid number
+			player = players[index];
+		} catch (Exception e) {
 			System.out.println("bad udp message: " + index);
 		}
 		
 		if (player != null)
 			//throw new NullPointerException();
-			player.receiveUDPMessage(msg);
+			player.receiveUDPMessage(data, 4);
 	}
 }

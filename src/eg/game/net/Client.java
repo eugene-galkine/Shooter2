@@ -69,7 +69,7 @@ public class Client implements Runnable
 			inFromServer = socket.getInputStream();
 			
 			//loop to reciece tcp messages
-			byte[] data = new byte[256];//TODO size
+			byte[] data = new byte[128];//TODO size
 			int dataLen;
 			while (!socket.isClosed() && (dataLen = inFromServer.read(data)) != -1)
 				clientProxy.receivedTCPMessage(data, dataLen);

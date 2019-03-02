@@ -33,7 +33,7 @@ public class UDPServer extends Thread
 			while (true)
 			{
 				udpSocket.receive(receivePacket);
-				Server.getWorld().receiveUDPMessage(receivePacket);
+				Server.getWorld().receiveUDPMessage(receivePacket.getData());
 			}
 		} catch (Exception e) 
 		{

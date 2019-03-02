@@ -1,7 +1,6 @@
 package eg.server.net;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.Socket;
 
 import eg.server.world.ServerPlayer;
@@ -23,7 +22,7 @@ public class TCPConnection extends Thread
 		
 		try
 		{
-			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			InputStream inFromClient = socket.getInputStream();
 			sp = Server.getWorld().addPlayer(socket);
 			
 			if (sp == null)
@@ -33,9 +32,10 @@ public class TCPConnection extends Thread
 				return;
 			}
 			
-			String in;
-			while (!socket.isClosed() && (in = inFromClient.readLine()) != null)
-				sp.receiveTCPMessage(in);
+			byte[] data = new byte[128];
+			int len;
+			while (!socket.isClosed() && (len = inFromClient.read(data)) != -1)
+				sp.receiveTCPMessage(data, len);
 			
 			inFromClient.close();
 			//obj.close();
