@@ -29,7 +29,7 @@ public class TCPConnection extends Thread
 		try
 		{
 			InputStream inFromClient = socket.getInputStream();
-			outputStream = socket.getOutputStream();
+			outputStream = socket.getOutputStream();//TODO maybe make a factory instead of doing this ... ?
 			sp = Server.getWorld().addPlayer(this, new UDPConnection(socket.getInetAddress(), socket.getPort()));
 			
 			if (sp == null)

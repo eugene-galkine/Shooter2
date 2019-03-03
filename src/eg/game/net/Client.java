@@ -70,9 +70,8 @@ public class Client implements Runnable
 			
 			//loop to reciece tcp messages
 			byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
-			int dataLen;
-			while (!socket.isClosed() && (dataLen = inFromServer.read(data)) != -1)
-				clientProxy.receivedTCPMessage(data, dataLen);
+			while (!socket.isClosed() && inFromServer.read(data) != -1)
+				clientProxy.receivedTCPMessage(data);
 			
 			inFromServer.close();
 		} catch (IOException e) 

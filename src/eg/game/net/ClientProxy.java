@@ -22,10 +22,10 @@ public class ClientProxy
 	}
 	
 	//package wide access
-	void receivedTCPMessage(byte[] msg, int length)//TODO use length
+	void receivedTCPMessage(byte[] msg)
 	{
 		//a new message was received over tcp
-		System.out.println("message from server tcp: " + msg[0]);
+		//System.out.println("message from server tcp: " + msg[0]);
 		
 		int position = 0;
 		int id, iX, iY;
