@@ -4,10 +4,10 @@ public class ByteArrayUtils {
 	public static int parseInt(byte[] data, int pos) {
 		//TODO check for errors
 		int result = 0;
-		result |= data[pos] << 24;
-		result |= (data[pos + 1] & 0xff) << 16;
-		result |= (data[pos + 2] & 0xff) << 8;
-		result |= (data[pos + 3] & 0xff);
+		result |= data[pos + 3] << 24;
+		result |= (data[pos + 2] & 0xff) << 16;
+		result |= (data[pos + 1] & 0xff) << 8;
+		result |= (data[pos] & 0xff);
 		
 		return result;
 	}
@@ -15,10 +15,10 @@ public class ByteArrayUtils {
 	public static float parseFloat(byte[] data, int pos) {
 		//TODO check for errors
 		return Float.intBitsToFloat(
-				data[pos] << 24 |
-				(data[pos + 1] & 0xff) << 16 |
-				(data[pos + 2] & 0xff) << 8 |
-				(data[pos + 3] & 0xff));
+				data[pos + 3] << 24 |
+				(data[pos + 2] & 0xff) << 16 |
+				(data[pos + 1] & 0xff) << 8 |
+				(data[pos] & 0xff));
 	}
 	
 	public static byte[] appendInt(byte[] data, int index, int msg) {	
