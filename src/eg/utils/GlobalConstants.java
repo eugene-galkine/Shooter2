@@ -2,6 +2,7 @@ package eg.utils;
 
 public class GlobalConstants {
 	public static final int UDP_PACKET_SIZE = 24;
+	public static final int TCP_PACKET_SIZE = 128;
 	
 	public static final byte UDP_CMD_POSITION = -1;
 	

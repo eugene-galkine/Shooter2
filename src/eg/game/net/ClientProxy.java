@@ -27,10 +27,10 @@ public class ClientProxy
 		//a new message was received over tcp
 		System.out.println("message from server tcp: " + msg[0]);
 		
-		int position = 1;
+		int position = 0;
 		int id, iX, iY;
 		float x, y, shootRot, rot;
-		switch(msg[0]) {
+		switch(msg[position++]) {
 		case TCP_CMD_SHOOT://shoot
 			id = parseInt(msg, position);
 			position += 4;

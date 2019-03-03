@@ -228,7 +228,11 @@ public class ServerPlayer
 	{
 		try 
 		{
-			outToClient.write(data);//TODO move to TCPConnection
+			byte[] buffer = new byte[TCP_PACKET_SIZE];
+	    	for (int i = 0; i < data.length && i < buffer.length; i++)
+	    		buffer[i] = data[i];
+			outToClient.write(buffer);//TODO move to TCPConnection
+			outToClient.flush();
 		} catch (IOException e)
 		{
 			e.printStackTrace();
