@@ -16,13 +16,13 @@ public class UDPClient extends Thread {
 	private DatagramSocket clientSocket;
 	private IUDPReceiver client;
 	
-	UDPClient(IUDPReceiver client, String ip, int port) throws UnknownHostException, SocketException
+	UDPClient(IUDPReceiver client, String ip, int localPort, int externalPort) throws UnknownHostException, SocketException
 	{
 		byte[] sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		byte[] receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket = new DatagramSocket(port);
-	    sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), port + 1);
+		clientSocket = new DatagramSocket(localPort);
+	    sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), externalPort);
 	    this.client = client;
 		start();
 	}

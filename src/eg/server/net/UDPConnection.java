@@ -27,7 +27,7 @@ public class UDPConnection {
 		//send a message over udp
 	    try 
 	    {
-	    	udpPacket.setData(data);//TODO move to UDPConnection
+	    	udpPacket.setData(data);
 			clientSocket.send(udpPacket);
 		} catch (IOException e) 
 	    {
