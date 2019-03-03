@@ -69,7 +69,7 @@ public class Client implements Runnable
 			inFromServer = socket.getInputStream();
 			
 			//loop to reciece tcp messages
-			byte[] data = new byte[128];//TODO size
+			byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
 			int dataLen;
 			while (!socket.isClosed() && (dataLen = inFromServer.read(data)) != -1)
 				clientProxy.receivedTCPMessage(data, dataLen);
@@ -82,12 +82,15 @@ public class Client implements Runnable
 	}
 
 	//package wide access
-	void sendTCPMessage(byte[] msg)
+	void sendTCPMessage(byte[] data)
 	{
 		//send a message over tcp
 		try 
 		{
-			outToServer.write(msg);
+			byte[] buffer = new byte[GlobalConstants.TCP_PACKET_SIZE];
+	    	for (int i = 0; i < data.length && i < buffer.length; i++)
+	    		buffer[i] = data[i];
+			outToServer.write(buffer);
 			outToServer.flush();
 		} catch (IOException e) 
 		{

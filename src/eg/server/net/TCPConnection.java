@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.Socket;
 
 import eg.server.world.ServerPlayer;
+import eg.utils.GlobalConstants;
 
 public class TCPConnection extends Thread
 {
@@ -32,7 +33,7 @@ public class TCPConnection extends Thread
 				return;
 			}
 			
-			byte[] data = new byte[128];
+			byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
 			int len;
 			while (!socket.isClosed() && (len = inFromClient.read(data)) != -1)
 				sp.receiveTCPMessage(data, len);
