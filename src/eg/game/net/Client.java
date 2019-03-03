@@ -6,9 +6,9 @@ import eg.game.net.interfaces.ITCPReceiver;
 import eg.game.net.interfaces.IUDPReceiver;
 
 public class Client implements IUDPReceiver, ITCPReceiver {
-    private ClientProxy clientProxy;
-    private String ip;
-    private int port;
+    private final ClientProxy clientProxy;
+    private final String ip;
+    private final int port;
     private UDPClient udpClient;
     private TCPClient tcpClient;
     

@@ -10,8 +10,8 @@ public class ServerWorld
 {
 	private static final int MAX_PLAYERS = 8;
 	
-	private ServerPlayer[] players;
-	private boolean[] playerIDs;
+	private final ServerPlayer[] players;
+	private final boolean[] playerIDs;
 	private int numPlayers;
 	
 	public ServerWorld()
@@ -103,7 +103,7 @@ public class ServerWorld
 		}
 	}
 	
-	public void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
+	private void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
 	{
 		byte[] data;
 		switch (type)
@@ -111,53 +111,53 @@ public class ServerWorld
 		case TCP_CMD_NEW_PLAYER:
 			data = new byte[5];
 			data[0] = TCP_CMD_NEW_PLAYER;
-			data = appendInt(data, 1, currentPlayer.getID());
+			appendInt(data, 1, currentPlayer.getID());
 			player.sendTCPMessage(data);
 			//player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
 			break;
 		case TCP_CMD_REMOVE_PLAYER:
 			data = new byte[5];
 			data[0] = TCP_CMD_REMOVE_PLAYER;
-			data = appendInt(data, 1, currentPlayer.getID());
+			appendInt(data, 1, currentPlayer.getID());
 			player.sendTCPMessage(data);
 			//player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
 			break;
 		case UDP_CMD_POSITION:
 			data = new byte[1 + 4 + 4 + 4 + 4];
-			data = appendInt(data, 0, currentPlayer.getID());
+			appendInt(data, 0, currentPlayer.getID());
 			data[4] = UDP_CMD_POSITION;
-			data = appendInt(data, 5, currentPlayer.getX());
-			data = appendInt(data, 9, currentPlayer.getY());
-			data = appendInt(data, 13, currentPlayer.getRot());
+			appendInt(data, 5, currentPlayer.getX());
+			appendInt(data, 9, currentPlayer.getY());
+			appendInt(data, 13, currentPlayer.getRot());
 			player.sendUDPMessage(data);
 			//player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		case TCP_CMD_SHOOT:
 			data = new byte[1 + 4 + 4 + 4 + 4];
 			data[0] = TCP_CMD_SHOOT;
-			data = appendInt(data, 1, currentPlayer.getID());
-			data = appendFloat(data, 5, currentPlayer.getfX());
-			data = appendFloat(data, 9, currentPlayer.getfY());
-			data = appendFloat(data, 13, currentPlayer.getfRot());
+			appendInt(data, 1, currentPlayer.getID());
+			appendFloat(data, 5, currentPlayer.getfX());
+			appendFloat(data, 9, currentPlayer.getfY());
+			appendFloat(data, 13, currentPlayer.getfRot());
 			player.sendTCPMessage(data);
 			//player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		case TCP_CMD_SPAWN:
 			if (player != currentPlayer) {
 				data = new byte[1 + 4 + 4 + 4 + 4];
-				data = appendInt(data, 0, currentPlayer.getID());
+				appendInt(data, 0, currentPlayer.getID());
 				data[4] = UDP_CMD_POSITION;
-				data = appendInt(data, 5, currentPlayer.getX());
-				data = appendInt(data, 9, currentPlayer.getY());
-				data = appendInt(data, 13, currentPlayer.getRot());
+				appendInt(data, 5, currentPlayer.getX());
+				appendInt(data, 9, currentPlayer.getY());
+				appendInt(data, 13, currentPlayer.getRot());
 				player.sendUDPMessage(data);
 //				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			} else {
 				data = new byte[1 + 4 + 4 + 4];
 				data[0] = TCP_CMD_SPAWN;
-				data = appendInt(data, 1, currentPlayer.getX());
-				data = appendInt(data, 5, currentPlayer.getY());
-				data = appendInt(data, 9, currentPlayer.getHealth());
+				appendInt(data, 1, currentPlayer.getX());
+				appendInt(data, 5, currentPlayer.getY());
+				appendInt(data, 9, currentPlayer.getHealth());
 				player.sendTCPMessage(data);
 //				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
 			}
@@ -166,10 +166,10 @@ public class ServerWorld
 		case TCP_CMD_GRENADE:
 			data = new byte[1 + 4 + 4 + 4 + 4];
 			data[0] = TCP_CMD_GRENADE;
-			data = appendInt(data, 1, currentPlayer.getID());
-			data = appendFloat(data, 5, currentPlayer.getfX());
-			data = appendFloat(data, 9, currentPlayer.getfY());
-			data = appendFloat(data, 13, currentPlayer.getfRot());
+			appendInt(data, 1, currentPlayer.getID());
+			appendFloat(data, 5, currentPlayer.getfX());
+			appendFloat(data, 9, currentPlayer.getfY());
+			appendFloat(data, 13, currentPlayer.getfRot());
 			player.sendTCPMessage(data);
 //			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;

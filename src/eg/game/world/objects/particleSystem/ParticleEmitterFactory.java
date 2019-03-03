@@ -8,9 +8,18 @@ public class ParticleEmitterFactory
 	public static final ParticleEmitterFactory Explosion = new ParticleEmitterFactory(3, 6, 3, 4, 6, 0, 360, 6, 17, 20, 80, "explosion");
 	public static final ParticleEmitterFactory Blood = new ParticleEmitterFactory(6, 10, 0, 10, 18, -30, 30, 3, 8, 4, 10, "blood");
 	
-	private float emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize;
-	private int minObjs, maxObjs;
-	private Image img[];
+	private final float emitDuration;
+	private final float minDuration;
+	private final float maxDuration;
+	private final float minDir;
+	private final float maxDir;
+	private final float minSpeed;
+	private final float maxSpeed;
+	private final float minSize;
+	private final float maxSize;
+	private final int minObjs;
+	private final int maxObjs;
+    private final Image[] img;
 	
 	private ParticleEmitterFactory (int minObjs, int maxObjs, float emitDuration, float minDuration, float maxDuration, float minDir, float maxDir,
 			float minSpeed, float maxSpeed, float minSize, float maxSize, String imageName)

@@ -10,8 +10,8 @@ import java.net.UnknownHostException;
 import eg.game.net.interfaces.IUDPReceiver;
 import eg.utils.GlobalConstants;
 
-public class UDPClient extends Thread {
-	private DatagramPacket receivePacket;
+class UDPClient extends Thread {
+	private final DatagramPacket receivePacket;
 	private DatagramPacket sendPacket;
 	private DatagramSocket clientSocket;
 	private IUDPReceiver client;

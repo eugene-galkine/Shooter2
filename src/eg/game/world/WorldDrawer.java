@@ -10,16 +10,16 @@ import javafx.scene.transform.Rotate;
 
 public class WorldDrawer extends AnimationTimer
 {
-	private GraphicsContext gc;
+	private final GraphicsContext gc;
 	private float offX, offY, zoom;
-	private LinkedList<IDrawable> objects;
+	private final LinkedList<IDrawable> objects;
 	
 	public WorldDrawer (GraphicsContext newGC)
 	{
 		gc = newGC;
 		offX = 0;
 		offY = 0;
-		objects = new LinkedList<IDrawable>();
+		objects = new LinkedList<>();
 		zoom = 1;
 	}
 	

@@ -8,11 +8,11 @@ import eg.game.world.objects.Bullet;
 public class Weapon 
 {
 	public static final Weapon pistol = new Weapon("pistol", 0, 10, false, 100, 6, 100);
-	
-	private static final Weapon list[] =
-		{
-			pistol
-		};
+
+	private static final Weapon[] list =
+			{
+					pistol
+			};
 	
 	public static Weapon getFromID(int id)
 	{
@@ -32,7 +32,7 @@ public class Weapon
 	private final int damage;
 	
 	private long shootTimer;
-	private Random r;
+	private final Random r;
 	
 	private Weapon(String name, int weaponID, int damage, boolean auto, int delay, int inaccuracy, int bulletSpeed)
 	{
@@ -48,7 +48,7 @@ public class Weapon
 		r = new Random();
 	}
 
-	public boolean isAuto()
+	boolean isAuto()
 	{
 		return automatic;
 	}
@@ -63,7 +63,7 @@ public class Weapon
 		return damage;
 	}
 	
-	public void shoot(float x, float y, float rot, int ID)
+	void shoot(float x, float y, float rot, int ID)
 	{
 		//don't shoot too soon
 		if (System.currentTimeMillis() - shootTimer < shootDelay)
@@ -73,7 +73,7 @@ public class Weapon
 		shootTimer = System.currentTimeMillis();
 		
 		//shoot a bullet
-		Bullet b = new Bullet(x,y,weaponID,rot + (r.nextInt(inaccuracy) - (inaccuracy/2)),bulletSpeed, ID);
+		Bullet b = new Bullet(x,y,weaponID,rot + (r.nextInt(inaccuracy) - (inaccuracy/2f)),bulletSpeed, ID);
 		GameWorld.getInstance().addObject(b);
 		
 		GameWorld.getClient().shoot(x,y,b.getRot());

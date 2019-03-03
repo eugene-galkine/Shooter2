@@ -19,22 +19,18 @@ public class ByteArrayUtils {
 				(data[pos] & 0xff));
 	}
 
-	public static byte[] appendInt(byte[] data, int index, int msg) {
+	public static void appendInt(byte[] data, int index, int msg) {
 		data[index] = (byte)(msg);
 		data[index + 1] = (byte)(msg >> 8);
 		data[index + 2] = (byte)(msg >> 16);
 		data[index + 3] = (byte)(msg >> 24);
-		
-		return data;
 	}
 
-	public static byte[] appendFloat(byte[] data, int index, float msg) {
+	public static void appendFloat(byte[] data, int index, float msg) {
 		int converted = Float.floatToIntBits(msg);
 		data[index] = (byte)(converted);
 		data[index + 1] = (byte)(converted >> 8);
 		data[index + 2] = (byte)(converted >> 16);
 		data[index + 3] = (byte)(converted >> 24);
-		
-		return data;
 	}
 }

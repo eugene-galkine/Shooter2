@@ -4,21 +4,21 @@ import javafx.scene.image.Image;
 
 public interface IDrawable
 {
-	public Image getImg();
-	public float getX();
-	public float getY();
+	Image getImg();
+	float getX();
+	float getY();
 	
-	public default float getRot()
+	default float getRot()
 	{
 		return 0;
 	}
 	
-	public default float getWidth()
+	default float getWidth()
 	{
 		return (float) getImg().getWidth();
 	}
 	
-	public default float getHeight()
+	default float getHeight()
 	{
 		return (float) getImg().getHeight();
 	}

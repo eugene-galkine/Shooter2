@@ -8,7 +8,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Wall implements IDrawable, ICollidable
 {
-	public static final String[] imgs =
+	private static final String[] imgs =
 		{
 			"images/map/wall0.png",
 			"images/map/wall1.png"
@@ -17,7 +17,7 @@ public class Wall implements IDrawable, ICollidable
 	private int currentImg;
 	private float x, y, w, h, rot;
 	private Image img;
-	private Rectangle r;
+	private final Rectangle r;
 	
 	public Wall (float inX, float inY, float w, float h, float rot)
 	{

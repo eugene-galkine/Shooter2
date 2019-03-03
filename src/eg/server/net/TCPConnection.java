@@ -12,7 +12,7 @@ import eg.utils.GlobalConstants;
 
 public class TCPConnection extends Thread
 {
-	private Socket socket;
+	private final Socket socket;
 	private OutputStream outputStream;
 	
 	public TCPConnection (Socket s)
@@ -49,8 +49,6 @@ public class TCPConnection extends Thread
 		} catch (Exception e) 
 		{
 			Server.getWorld().removePlayer(sp);
-			
-			return;
 		}
 	}
 	

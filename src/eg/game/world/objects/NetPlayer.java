@@ -10,7 +10,7 @@ public class NetPlayer extends Person
 	private static final int IMG_HEIGHT = 64;
 	
 	private Weapon weapon;
-	private int ID;
+	private final int ID;
 	
 	public NetPlayer(int x, int y, int id) 
 	{

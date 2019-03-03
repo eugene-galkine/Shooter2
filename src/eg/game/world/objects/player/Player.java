@@ -10,11 +10,13 @@ import javafx.scene.input.MouseEvent;
 import eg.game.Control;
 
 public class Player extends Person implements EventHandler<Event>
-{	
+{
+	private static final int MOVE_SPEED = 25;
+
 	private float movX, movY;
 	private boolean movLeft, movRight, movUp, movDown, isShooting, throwReleased;
-	private int movSpeed = 25, health;
-	private Weapon weapon;
+	private int health;
+	private final Weapon weapon;
 	//private int ammo;
 	
 	public Player(int x, int y)
@@ -51,8 +53,8 @@ public class Player extends Person implements EventHandler<Event>
 			
 			//look at mouse
 			setRot(180 + (float)Math.toDegrees(Math.atan2(
-					(getX()+IMG_WIDTH/2) - (mouse.getX() - (Main.MAGIC_NUM - getX())), 
-					(mouse.getY() - (Main.MAGIC_NUM - getY())) - (getY()+IMG_HEIGHT/2))));
+					(getX()+IMG_WIDTH/2f) - (mouse.getX() - (Main.MAGIC_NUM - getX())),
+					(mouse.getY() - (Main.MAGIC_NUM - getY())) - (getY()+IMG_HEIGHT/2f))));
 			
 			//mouse event
 			switch (mouse.getEventType().getName())
@@ -127,25 +129,25 @@ public class Player extends Person implements EventHandler<Event>
 	{
 		//horizontal movement
 		if (movLeft)
-			movX = -movSpeed;
+			movX = -MOVE_SPEED;
 		else if (movRight)
-			movX = movSpeed;
+			movX = MOVE_SPEED;
 		else
 			movX = 0;
 		
 		//vertical movement
 		if (movUp)
-			movY = -movSpeed;
+			movY = -MOVE_SPEED;
 		else if (movDown)
-			movY = movSpeed;
+			movY = MOVE_SPEED;
 		else
 			movY = 0;
 		
 		//fix diagonal speed boost
 		if (movX != 0 && movY != 0)
 		{
-			movX = (float)movX * 0.7071f;//sin and cos of 45
-			movY = (float)movY * 0.7071f;
+			movX = movX * 0.7071f;//sin and cos of 45
+			movY = movY * 0.7071f;
 		}
 	}
 	
@@ -189,12 +191,16 @@ public class Player extends Person implements EventHandler<Event>
 	
 	private void shoot()
 	{
-		weapon.shoot(x+IMG_WIDTH/2,y+IMG_HEIGHT/2,rot,GameWorld.getClient().getID());
+		weapon.shoot(x+IMG_WIDTH/2f,y+IMG_HEIGHT/2f,rot,GameWorld.getClient().getID());
 	}
 
 	public void hit(int weaponID) 
 	{
-		takeDamage(Weapon.getFromID(weaponID).getDamage());
+		Weapon weapon = Weapon.getFromID(weaponID);
+		if (weapon != null)
+			takeDamage(weapon.getDamage());
+		else
+			System.out.println("Weapon for id=" + weaponID + " is null");
 	}
 	
 	public void takeDamage(int damage)

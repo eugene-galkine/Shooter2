@@ -11,14 +11,19 @@ public class ServerPlayer
 {
 	//private static final float MOVE_SPEED = 25f;
 	
-	private TCPConnection tcpConnection;
-	private UDPConnection udpConnection;
-	private int id;
+	private final TCPConnection tcpConnection;
+	private final UDPConnection udpConnection;
+	private final int id;
 	//private long lastUpdated;
-	private int x, y, rot, weaponID, health, killer;//TODO
+	private int x;
+	private int y;
+	private int rot;
+	private final int weaponID;
+	private int health;
+	private int killer;//TODO
 	private float fx, fy, fRot;//TODO look into this
 	private volatile boolean dead;
-	private Object lockObj;
+	private final Object lockObj;
 	
 	public ServerPlayer(TCPConnection tcpConnection, UDPConnection udpConnection, int inID)
 	{
@@ -38,7 +43,7 @@ public class ServerPlayer
 		if (inID != -1) {
 			byte[] data = new byte[5];
 			data[0] = TCP_CMD_CONNECTED;
-			data = appendInt(data, 1, id);
+			appendInt(data, 1, id);
 			sendTCPMessage(data);
 		} else {
 			sendTCPMessage(new byte[]{TCP_CMD_REJECTED});
@@ -152,7 +157,10 @@ public class ServerPlayer
 		int bulletID = parseInt(data, index);
 		index += 4;
 		int weaponID = parseInt(data, index);
-		int damage = Weapon.getFromID(weaponID).getDamage();
+		Weapon weapon = Weapon.getFromID(weaponID);
+		int damage = 0;
+		if (weapon != null)
+			damage = weapon.getDamage();
 		
 		health -= damage;
 		if (health <= 0)
@@ -160,26 +168,21 @@ public class ServerPlayer
 			killer = bulletID;
 			
 			//wait until we are confirmed dead by client to respawn
-			new Thread(new Runnable() 
-			{
-				@Override
-				public void run() 
+			new Thread(() -> {
+				//TODO better anti cheat
+
+				while (!dead)
 				{
-					//TODO better anti cheat
-					
-					while (!dead)
+					try
 					{
-						try 
+						synchronized (lockObj)
 						{
-							synchronized (lockObj)
-							{
-								lockObj.wait();
-							}
-						} catch (InterruptedException e) {}
-					}
-					
-					respawn();
+							lockObj.wait();
+						}
+					} catch (InterruptedException ignore) {}
 				}
+
+				respawn();
 			}).start();
 		}
 	}

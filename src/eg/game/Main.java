@@ -16,13 +16,12 @@ public class Main extends Application
 	public static final int MAGIC_NUM = 348;
 	private static final boolean FULLSCREEN = false;
 	
-	Scene scene;
+	private Scene scene;
 	//AnchorPane pane;
-	State gameState;
+    private State gameState;
 
 	@Override
-	public void start(Stage stage) throws Exception
-	{
+	public void start(Stage stage) {
 		//JavaFX init
 		Group root = new Group();
 		scene = new Scene(root);
@@ -43,7 +42,7 @@ public class Main extends Application
 		changeState(new MpShooter(gc, scene, this));
 	}
 	
-	public void changeState(State state)
+	private void changeState(State state)
 	{
 		//pane.getChildren().clear();
 		gameState = state;

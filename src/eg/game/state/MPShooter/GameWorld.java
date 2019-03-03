@@ -15,9 +15,9 @@ public class GameWorld extends World
 	private static ClientProxy client = null;
 	private static final int NUM_PLAYERS = 8;
 	
-	private NetPlayer netPlayers[];
+	private final NetPlayer[] netPlayers;
 	private Player ourPlayer;
-	private Object playerLock;
+	private final Object playerLock = new Object();
 	
 	public GameWorld(GraphicsContext newgc, ClientProxy cp) 
 	{
@@ -45,14 +45,9 @@ public class GameWorld extends World
 		super.addObject(obj);
 		
 		//this is the player
-		if (obj instanceof Player)
-		{
-			if (playerLock == null)
-				playerLock = new Object();
-			
+		if (obj instanceof Player) {
 			ourPlayer = (Player)obj;
-			synchronized (playerLock)
-			{
+			synchronized (playerLock) {
 				playerLock.notify();
 			}
 		}
@@ -130,34 +125,26 @@ public class GameWorld extends World
 		else
 		{
 			//wait for the player to exist and then spawn him
-			new Thread(new Runnable() 
-			{
-				@Override
-				public void run() 
-				{
-					//initiate the lock object if it needs to be (will always need to be unless I add something else that used this object)
-					if (playerLock == null)
-						playerLock = new Object();
-						
-					while (ourPlayer == null)
-						try 
+			new Thread(() -> {
+				//initiate the lock object if it needs to be (will always need to be unless I add something else that used this object)
+				while (ourPlayer == null)
+					try
+					{
+						synchronized (playerLock)
 						{
-							synchronized (playerLock)
-							{
-								playerLock.wait();
-							}
-						} catch (InterruptedException e) {}
-					
-					//finally spawn when ready
-					ourPlayer.spawn(x,y,health);
-				}
+							playerLock.wait();
+						}
+					} catch (InterruptedException ignore) {}
+
+				//finally spawn when ready
+				ourPlayer.spawn(x,y,health);
 			}).start();
 		}
 	}
 	
 	public void throwGernade(int id, float x, float y, float rot) 
 	{
-		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2), y+Person.IMG_HEIGHT/2, rot, id));
+		GameWorld.getInstance().addObject(new Gernade(x+(Person.IMG_WIDTH/2f), y+(Person.IMG_HEIGHT/2f), rot, id));
 	}
 
 	public Player getPlayer() 

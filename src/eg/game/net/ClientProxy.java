@@ -7,7 +7,7 @@ import static eg.utils.ByteArrayUtils.*;
 
 public class ClientProxy 
 {
-	private Client client;
+	private final Client client;
 	private int ID;
 	
 	ClientProxy(Client c)
@@ -110,12 +110,12 @@ public class ClientProxy
 	public void updatePlayerPos(int x, int y, int rot)
 	{
 		byte[] data = new byte[4 + 1 + 4 + 4 + 4];
-		data = appendInt(data, 0, ID);
+		appendInt(data, 0, ID);
 		data[4] = UDP_CMD_POSITION;
-		data = appendInt(data, 5, x);
-		data = appendInt(data, 9, y);
-		data = appendInt(data, 13, rot);
-		
+		appendInt(data, 5, x);
+		appendInt(data, 9, y);
+		appendInt(data, 13, rot);
+
 		client.sendUDPMessage(data);
 		//"POS|"+ID+","+x+","+y+","+rot+",");
 	}
@@ -124,10 +124,10 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1 + 4 + 4 + 4];
 		data[0] = TCP_CMD_SHOOT;
-		data = appendFloat(data, 1, x);
-		data = appendFloat(data, 5, y);
-		data = appendFloat(data, 9, rot);
-		
+		appendFloat(data, 1, x);
+		appendFloat(data, 5, y);
+		appendFloat(data, 9, rot);
+
 		client.sendTCPMessage(data);
 		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
@@ -136,10 +136,10 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1 + 4 + 4 + 4];
 		data[0] = TCP_CMD_GRENADE;
-		data = appendFloat(data, 1, x);
-		data = appendFloat(data, 5, y);
-		data = appendFloat(data, 9, dir);
-		
+		appendFloat(data, 1, x);
+		appendFloat(data, 5, y);
+		appendFloat(data, 9, dir);
+
 		client.sendTCPMessage(data);
 		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
 	}
@@ -148,9 +148,9 @@ public class ClientProxy
 	{
 		byte[] data = new byte[1 + 4 + 4];
 		data[0] = TCP_CMD_HIT;
-		data = appendInt(data, 1, ownerID);
-		data = appendInt(data, 5, weaponID);
-		
+		appendInt(data, 1, ownerID);
+		appendInt(data, 5, weaponID);
+
 		client.sendTCPMessage(data);
 		//client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
 		//System.out.println("player " + targetID + " took damage from " + ownerID + " (ClientProxy)");

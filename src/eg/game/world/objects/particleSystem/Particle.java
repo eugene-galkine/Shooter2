@@ -7,8 +7,13 @@ import javafx.scene.image.Image;
 
 public class Particle extends IUpdatable implements IDrawable
 {
-	private float x, y, mx, my, duration, dir;
-	private Image img;
+	private float x;
+    private float y;
+    private final float mx;
+    private final float my;
+    private float duration;
+    private final float dir;
+	private final Image img;
 	
 	public Particle (float x, float y, float dir, float speed, float timer, float size, Image img)
 	{

@@ -10,15 +10,15 @@ public abstract class Person extends IUpdatable implements IDrawable
 {
 	public static final int IMG_WIDTH = 64;
 	public static final int IMG_HEIGHT = 64;
-	public static final int BOUND_SIZE_DIFF = 6;
+	static final int BOUND_SIZE_DIFF = 6;
 	
 	protected float x, y;
 	protected float rot;
-	private Image img;
+	private final Image img;
 	
-	protected Rectangle bounds;
+	final Rectangle bounds;
 	
-	public Person(float x, float y)
+	protected Person(float x, float y)
 	{
 		this.x = x;
 		this.y = y;
@@ -54,7 +54,7 @@ public abstract class Person extends IUpdatable implements IDrawable
 		return rot;
 	}
 	
-	public void setRot (float newRot)
+	void setRot(float newRot)
 	{
 		rot = newRot;
 	}
@@ -66,5 +66,5 @@ public abstract class Person extends IUpdatable implements IDrawable
 		return bounds.getBoundsInLocal();
 	}
 	
-	public abstract Image getImage();
+	protected abstract Image getImage();
 }

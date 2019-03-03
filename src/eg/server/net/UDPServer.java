@@ -6,15 +6,14 @@ import java.net.SocketException;
 
 import eg.utils.GlobalConstants;
 
-public class UDPServer extends Thread
+class UDPServer extends Thread
 {
-	private DatagramPacket receivePacket;
-	private byte[] receiveData;
+	private final DatagramPacket receivePacket;
 	private DatagramSocket udpSocket;
 	
-	public UDPServer(int port) throws SocketException
+	UDPServer(int port) throws SocketException
 	{
-		receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
+		byte[] receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		udpSocket = new DatagramSocket(port);
 		start();

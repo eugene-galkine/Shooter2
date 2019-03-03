@@ -13,18 +13,19 @@ public class Bullet extends IUpdatable implements IDrawable
 	private static final int IMG_HEIGHT = 8;
 	
 	private float x, y;
-	private float rot;
-	private Image img;
-	private float movX, movY, movSpeed;
-	private Rectangle r;
-	private int ownerID, weaponID;
+	private final float rot;
+	private final Image img;
+	private final float movX;
+	private final float movY;
+	private final Rectangle r;
+	private final int ownerID;
+	private final int weaponID;
 	
 	public Bullet(float inX, float inY, int inwid, float inRot, float inSpeed, int owner)
 	{
-		this.x = inX - IMG_WIDTH/2;
-		this.y = inY - IMG_HEIGHT/2;
+		this.x = inX - IMG_WIDTH/2f;
+		this.y = inY - IMG_HEIGHT/2f;
 		this.rot = inRot;
-		this.movSpeed = inSpeed;
 		this.ownerID = owner;
 		this.weaponID = inwid;
 		
@@ -32,14 +33,14 @@ public class Bullet extends IUpdatable implements IDrawable
 		img = getImage();
 		
 		//Calculate how much to move in each direction each frame
-		movX = (float) Math.sin(Math.toRadians(rot)) * movSpeed;
-		movY = (float) -Math.cos(Math.toRadians(rot)) * movSpeed;
+		movX = (float) Math.sin(Math.toRadians(rot)) * inSpeed;
+		movY = (float) -Math.cos(Math.toRadians(rot)) * inSpeed;
 		
 		//set up bounds
 		r = new Rectangle(x,y,IMG_WIDTH,IMG_HEIGHT);
 	}
 	
-	public Image getImage()
+	private Image getImage()
 	{
 		return new Image("images/bullets/bullet.png",IMG_WIDTH,IMG_HEIGHT,true,true);
 	}

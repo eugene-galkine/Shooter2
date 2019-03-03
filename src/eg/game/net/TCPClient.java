@@ -8,10 +8,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class TCPClient extends Thread {
+class TCPClient extends Thread {
     private Socket socket;
     private OutputStream outputStream;
-    private ITCPReceiver client;
+    private final ITCPReceiver client;
 
     TCPClient(ITCPReceiver client, String ip, int port) throws IOException {
         this.client = client;

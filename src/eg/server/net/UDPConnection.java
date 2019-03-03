@@ -10,11 +10,10 @@ import eg.utils.GlobalConstants;
 
 public class UDPConnection {
 	private DatagramPacket udpPacket;
-	private byte[] sendData;
 	private DatagramSocket clientSocket;
 	
-	public UDPConnection(InetAddress tcpAddress, int tcpPort) throws SocketException {
-		this.sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
+	UDPConnection(InetAddress tcpAddress, int tcpPort) throws SocketException {
+		byte[] sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		clientSocket = new DatagramSocket();
 		udpPacket = new DatagramPacket(sendData, sendData.length, tcpAddress, tcpPort+1);
 	}
