@@ -5,6 +5,7 @@ import java.net.Socket;
 import eg.utils.ByteArrayUtils;
 
 import static eg.utils.GlobalConstants.*;
+import static eg.utils.ByteArrayUtils.*;
 
 public class ServerWorld 
 {
@@ -105,30 +106,46 @@ public class ServerWorld
 	
 	public void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
 	{
+		byte[] data;
 		switch (type)
 		{
-		case NEW_PLAYER:
-			player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
+		case TCP_CMD_NEW_PLAYER:
+			data = new byte[5];
+			data[0] = TCP_CMD_NEW_PLAYER;
+			data = appendInt(data, 1, currentPlayer.getID());
+			player.sendTCPMessage(data);
+			//player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
 			break;
-		case REMOVE_PLAYER:
-			player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
+		case TCP_CMD_REMOVE_PLAYER:
+			data = new byte[5];
+			data[0] = TCP_CMD_REMOVE_PLAYER;
+			data = appendInt(data, 1, currentPlayer.getID());
+			player.sendTCPMessage(data);
+			//player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
 			break;
-		case UPDATE_POS:
-			//TODO UPD_CMD_POSITION
-			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+		case UDP_CMD_POSITION:
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			data[0] = UDP_CMD_POSITION;
+			data = appendInt(data, 1, currentPlayer.getID());
+			data = appendInt(data, 5, currentPlayer.getX());
+			data = appendInt(data, 9, currentPlayer.getY());
+			data = appendInt(data, 13, currentPlayer.getRot());
+			player.sendUDPMessage(data);
+			//player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
-		case SHOOT:
-			player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
+		case TCP_CMD_SHOOT:
+			
+			//player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
-		case SPAWN:
-			if (player != currentPlayer)
-				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
-			else
-				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
+		case TCP_CMD_SPAWN:
+//			if (player != currentPlayer)
+//				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+//			else
+//				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
 			
 			break;
-		case THROW_GERNADE:
-			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
+		case TCP_CMD_GRENADE:
+//			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		}
 	}
