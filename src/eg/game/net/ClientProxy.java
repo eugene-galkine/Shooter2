@@ -116,7 +116,7 @@ public class ClientProxy
 		data = appendInt(data, 9, y);
 		data = appendInt(data, 13, rot);
 		
-		client.sendUDPMessage(data, data.length);
+		client.sendUDPMessage(data);
 		//"POS|"+ID+","+x+","+y+","+rot+",");
 	}
 
@@ -128,7 +128,7 @@ public class ClientProxy
 		data = appendFloat(data, 5, y);
 		data = appendFloat(data, 9, rot);
 		
-		client.sendTCPMessage(data, data.length);
+		client.sendTCPMessage(data);
 		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
 
@@ -140,7 +140,7 @@ public class ClientProxy
 		data = appendFloat(data, 5, y);
 		data = appendFloat(data, 9, dir);;
 		
-		client.sendTCPMessage(data, data.length);
+		client.sendTCPMessage(data);
 		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");
 	}
 	
@@ -151,7 +151,7 @@ public class ClientProxy
 		data = appendInt(data, 1, ownerID);
 		data = appendInt(data, 5, weaponID);
 		
-		client.sendTCPMessage(data, data.length);
+		client.sendTCPMessage(data);
 		//client.sendTCPMessage("HIT|"+ownerID+","+weaponID+",");
 		//System.out.println("player " + targetID + " took damage from " + ownerID + " (ClientProxy)");
 	}
@@ -161,7 +161,7 @@ public class ClientProxy
 		byte[] data = new byte[1];
 		data[0] = TCP_CMD_DEAD;
 		
-		client.sendTCPMessage(data, data.length);
+		client.sendTCPMessage(data);
 		//client.sendTCPMessage("DEAD|,");
 	}
 }

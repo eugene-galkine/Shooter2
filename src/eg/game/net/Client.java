@@ -82,12 +82,12 @@ public class Client implements Runnable
 	}
 
 	//package wide access
-	void sendTCPMessage(byte[] msg, int length)
+	void sendTCPMessage(byte[] msg)
 	{
 		//send a message over tcp
 		try 
 		{
-			outToServer.write(msg, 0, length);
+			outToServer.write(msg);
 			outToServer.flush();
 		} catch (IOException e) 
 		{
@@ -96,12 +96,12 @@ public class Client implements Runnable
 	}
 	
 	//package wide access
-	void sendUDPMessage(byte[] msg, int length)
+	void sendUDPMessage(byte[] msg)
 	{
 		//send a message over udp
 	    try 
 	    {
-	    	sendPacket.setData(msg, 0, length);
+	    	sendPacket.setData(msg);
 			clientSocket.send(sendPacket);
 		} catch (IOException e) 
 	    {

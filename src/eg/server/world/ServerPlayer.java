@@ -53,9 +53,9 @@ public class ServerPlayer
 				byte[] data = new byte[5];
 				data[0] = TCP_CMD_CONNECTED;
 				data = appendInt(data, 1, id);
-				sendTCPMessage(data, 5);
+				sendTCPMessage(data);
 			} else {
-				sendTCPMessage(new byte[]{TCP_CMD_REJECTED}, 1);
+				sendTCPMessage(new byte[]{TCP_CMD_REJECTED});
 			}
 		} catch (IOException e)
 		{
@@ -224,11 +224,11 @@ public class ServerPlayer
 	 * network functions
 	 */
 	
-	void sendTCPMessage(byte[] data, int length) 
+	void sendTCPMessage(byte[] data) 
 	{
 		try 
 		{
-			outToClient.write(data, 0, length);//TODO move to TCPConnection
+			outToClient.write(data);//TODO move to TCPConnection
 		} catch (IOException e)
 		{
 			e.printStackTrace();
