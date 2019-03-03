@@ -10,7 +10,7 @@ public class ClientProxy
 	private Client client;
 	private int ID;
 	
-	public ClientProxy(Client c)
+	ClientProxy(Client c)
 	{
 		this.client = c;
 		this.ID = -1;
@@ -138,7 +138,7 @@ public class ClientProxy
 		data[0] = TCP_CMD_GRENADE;
 		data = appendFloat(data, 1, x);
 		data = appendFloat(data, 5, y);
-		data = appendFloat(data, 9, dir);;
+		data = appendFloat(data, 9, dir);
 		
 		client.sendTCPMessage(data);
 		//client.sendTCPMessage("GERNADE|"+x+","+y+","+dir+",");

@@ -6,15 +6,17 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import eg.game.net.interfaces.IUDPReceiver;
 import eg.utils.GlobalConstants;
 
-public class Client implements Runnable
+public class Client implements Runnable, IUDPReceiver
 {
 	private Socket socket;
 	private OutputStream outToServer;
     private ClientProxy clientProxy;
     private String ip;
     private int port;
+    private UDPClient udpClient;
     
     //cannot access outside of package
 	Client (String ip, int port) {
@@ -23,25 +25,19 @@ public class Client implements Runnable
     	this.port = port;
 	}
 	
-	void connect()
-	{
-		try 
-		{
+	void connect() {
+		try {
 			//TCP
 			socket = new Socket(ip, port);
 			socket.setTcpNoDelay(true);
 			outToServer = socket.getOutputStream();
 			
 			//UDP
-		    new UDPClient(ip, port + 1);
-		} catch (UnknownHostException e) 
-		{
-			e.printStackTrace();
-		} catch (IOException e) 
-		{
+			udpClient = new UDPClient(this, ip, socket.getLocalPort() + 1);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		new Thread(this).start();
 	}
 	
@@ -86,5 +82,14 @@ public class Client implements Runnable
 	ClientProxy getProxy() 
 	{
 		return clientProxy;
+	}
+
+	public void sendUDPMessage(byte[] data) {
+		udpClient.sendPacket(data);
+	}
+
+	@Override
+	public void onNewUDPMessage(byte[] data, int length) {
+		clientProxy.receivedUDPMessage(data, length);
 	}
 }

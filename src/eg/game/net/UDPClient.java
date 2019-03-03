@@ -7,21 +7,23 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import eg.game.net.interfaces.IUDPReceiver;
 import eg.utils.GlobalConstants;
 
 public class UDPClient extends Thread {
 	private DatagramPacket receivePacket;
 	private DatagramPacket sendPacket;
 	private DatagramSocket clientSocket;
-	private byte[] receiveData;
+	private IUDPReceiver client;
 	
-	public UDPClient(String ip, int port) throws UnknownHostException, SocketException 
+	UDPClient(IUDPReceiver client, String ip, int port) throws UnknownHostException, SocketException
 	{
 		byte[] sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
-		receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
+		byte[] receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		clientSocket = new DatagramSocket(port);
 	    sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), port + 1);
+	    this.client = client;
 		start();
 	}
 	
@@ -34,7 +36,7 @@ public class UDPClient extends Thread {
 			try 
 			{
 				clientSocket.receive(receivePacket);
-				clientProxy.receivedUDPMessage(receivePacket.getData(), receivePacket.getLength());//TODO good design pattern for 2 way communication
+				client.onNewUDPMessage(receivePacket.getData(), receivePacket.getLength());
 			} catch (IOException e) 
 			{
 				e.printStackTrace();
@@ -43,7 +45,7 @@ public class UDPClient extends Thread {
 	}
 	
 	//package wide access
-	void sendUDPMessage(byte[] msg)
+	void sendPacket(byte[] msg)
 	{
 		//send a message over udp
 	    try 
