@@ -1,14 +1,9 @@
 package eg.server.world;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Socket;
-
 import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
-import eg.utils.GlobalConstants;
+import eg.server.net.TCPConnection;
+import eg.server.net.UDPConnection;
 import static eg.utils.GlobalConstants.*;
 import static eg.utils.ByteArrayUtils.*;
 
@@ -16,23 +11,20 @@ public class ServerPlayer
 {
 	//private static final float MOVE_SPEED = 25f;
 	
-	private Socket socket;
+	private TCPConnection tcpConnection;
+	private UDPConnection udpConnection;
 	private int id;
-	private OutputStream outToClient;
-	private DatagramPacket udpPacket;
-	private byte[] sendData;
-	private DatagramSocket clientSocket;
 	//private long lastUpdated;
 	private int x, y, rot, weaponID, health, killer;//TODO
 	private float fx, fy, fRot;//TODO look into this
 	private volatile boolean dead;
 	private Object lockObj;
 	
-	public ServerPlayer(Socket inSocket, int inID)
+	public ServerPlayer(TCPConnection tcpConnection, UDPConnection udpConnection, int inID)
 	{
-		this.socket = inSocket;
+		this.tcpConnection = tcpConnection;
+		this.udpConnection = udpConnection;
 		this.id = inID;
-		this.sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		//this.lastUpdated = System.currentTimeMillis();
 		this.x = 348;//TODO spawn
 		this.y = 348;
@@ -43,23 +35,13 @@ public class ServerPlayer
 		this.dead = false;
 		this.lockObj = new Object();
 		
-		try 
-		{
-			outToClient = socket.getOutputStream();
-			udpPacket = new DatagramPacket(sendData, sendData.length, socket.getInetAddress(), socket.getPort()+1);
-			clientSocket = new DatagramSocket();
-			
-			if (inID != -1) {
-				byte[] data = new byte[5];
-				data[0] = TCP_CMD_CONNECTED;
-				data = appendInt(data, 1, id);
-				sendTCPMessage(data);
-			} else {
-				sendTCPMessage(new byte[]{TCP_CMD_REJECTED});
-			}
-		} catch (IOException e)
-		{
-			e.printStackTrace();
+		if (inID != -1) {
+			byte[] data = new byte[5];
+			data[0] = TCP_CMD_CONNECTED;
+			data = appendInt(data, 1, id);
+			sendTCPMessage(data);
+		} else {
+			sendTCPMessage(new byte[]{TCP_CMD_REJECTED});
 		}
 	}
 	
@@ -224,32 +206,12 @@ public class ServerPlayer
 	 * network functions
 	 */
 	
-	void sendTCPMessage(byte[] data) 
-	{
-		try 
-		{
-			byte[] buffer = new byte[TCP_PACKET_SIZE];
-	    	for (int i = 0; i < data.length && i < buffer.length; i++)
-	    		buffer[i] = data[i];
-			outToClient.write(buffer);//TODO move to TCPConnection
-			outToClient.flush();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	public void sendTCPMessage(byte[] data) {
+		tcpConnection.sendPacket(data);
 	}
 
-	void sendUDPMessage(byte[] data)
-	{
-		//send a message over udp
-	    try 
-	    {
-	    	udpPacket.setData(data);//TODO move to UDPConnection
-			clientSocket.send(udpPacket);
-		} catch (IOException e) 
-	    {
-			e.printStackTrace();
-		}
+	void sendUDPMessage(byte[] data){
+		udpConnection.setPacket(data);
 	}
 	
 	public void receiveTCPMessage(byte[] data, int len) 
@@ -299,9 +261,8 @@ public class ServerPlayer
 	{
 		try
 		{
-			outToClient.close();
-			clientSocket.close();
-			socket.close();
+			tcpConnection.close();
+			udpConnection.close();
 		} catch (Exception e)
 		{
 			e.printStackTrace();

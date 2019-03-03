@@ -1,9 +1,8 @@
 package eg.server.world;
 
-import java.net.Socket;
-
+import eg.server.net.TCPConnection;
+import eg.server.net.UDPConnection;
 import eg.utils.ByteArrayUtils;
-
 import static eg.utils.GlobalConstants.*;
 import static eg.utils.ByteArrayUtils.*;
 
@@ -57,12 +56,12 @@ public class ServerWorld
 		sendToAll(TCP_CMD_REMOVE_PLAYER, sp);
 	}
 	
-	public synchronized ServerPlayer addPlayer(Socket socket)
+	public synchronized ServerPlayer addPlayer(TCPConnection tcp, UDPConnection udp)
 	{
 		if (numPlayers < MAX_PLAYERS)
 		{
-			ServerPlayer sp = new ServerPlayer(socket, getNextID());
-			System.out.println("new player connected: " + socket.getLocalAddress() + " and was given id: " + sp.getID());
+			ServerPlayer sp = new ServerPlayer(tcp, udp, getNextID());
+			System.out.println("new player connected and was given id: " + sp.getID());
 			
 			//tell everyone someone has joined
 			sendToAll(TCP_CMD_NEW_PLAYER, sp, true);
@@ -82,7 +81,7 @@ public class ServerWorld
 			return sp;
 		} else
 		{
-			new ServerPlayer(socket, -1).close();
+			new ServerPlayer(tcp, udp, -1).close();
 			
 			return null;
 		}

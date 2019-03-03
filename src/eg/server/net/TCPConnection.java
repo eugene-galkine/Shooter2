@@ -1,6 +1,10 @@
 package eg.server.net;
 
+import static eg.utils.GlobalConstants.TCP_PACKET_SIZE;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import eg.server.world.ServerPlayer;
@@ -9,6 +13,7 @@ import eg.utils.GlobalConstants;
 public class TCPConnection extends Thread
 {
 	private Socket socket;
+	private OutputStream outputStream;
 	
 	public TCPConnection (Socket s)
 	{
@@ -24,7 +29,8 @@ public class TCPConnection extends Thread
 		try
 		{
 			InputStream inFromClient = socket.getInputStream();
-			sp = Server.getWorld().addPlayer(socket);
+			outputStream = socket.getOutputStream();
+			sp = Server.getWorld().addPlayer(this, new UDPConnection(socket.getInetAddress(), socket.getPort()));
 			
 			if (sp == null)
 			{
@@ -46,5 +52,25 @@ public class TCPConnection extends Thread
 			
 			return;
 		}
+	}
+	
+	public void sendPacket(byte[] data) 
+	{
+		try 
+		{
+			byte[] buffer = new byte[TCP_PACKET_SIZE];
+	    	for (int i = 0; i < data.length && i < buffer.length; i++)
+	    		buffer[i] = data[i];
+			outputStream.write(buffer);//TODO move to TCPConnection
+			outputStream.flush();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void close() throws IOException {
+		outputStream.close();
+		socket.close();
 	}
 }
