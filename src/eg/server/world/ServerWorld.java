@@ -4,6 +4,8 @@ import java.net.Socket;
 
 import eg.utils.ByteArrayUtils;
 
+import static eg.utils.GlobalConstants.*;
+
 public class ServerWorld 
 {
 	private static final int MAX_PLAYERS = 8;
@@ -11,16 +13,6 @@ public class ServerWorld
 	private ServerPlayer[] players;
 	private boolean[] playerIDs;
 	private int numPlayers;
-	
-	enum MsgType
-	{
-		NEW_PLAYER, //0
-		REMOVE_PLAYER, //1
-		UPDATE_POS, //2
-		SHOOT, //3
-		SPAWN,  //4
-		THROW_GERNADE
-	}
 	
 	public ServerWorld()
 	{
@@ -61,7 +53,7 @@ public class ServerWorld
 		numPlayers--;
 		
 		//tell everyone else about it
-		sendToAll(MsgType.REMOVE_PLAYER, sp);
+		sendToAll(TCP_CMD_REMOVE_PLAYER, sp);
 	}
 	
 	public synchronized ServerPlayer addPlayer(Socket socket)
@@ -72,7 +64,7 @@ public class ServerWorld
 			System.out.println("new player connected: " + socket.getLocalAddress() + " and was given id: " + sp.getID());
 			
 			//tell everyone someone has joined
-			sendToAll(MsgType.NEW_PLAYER, sp, true);
+			sendToAll(TCP_CMD_NEW_PLAYER, sp, true);
 			
 			//add player to list
 			players[sp.getID()] = sp;
@@ -82,7 +74,7 @@ public class ServerWorld
 			//send data about all players to new player
 			for (ServerPlayer player : players)
 				if (player != null && sp != player)
-					sendTo(MsgType.NEW_PLAYER, sp, player);
+					sendTo(TCP_CMD_NEW_PLAYER, sp, player);
 			
 			numPlayers++;
 			
@@ -95,25 +87,25 @@ public class ServerWorld
 		}
 	}
 	
-	public void sendToAll(MsgType mt, ServerPlayer currentPlayer)
+	public void sendToAll(byte type, ServerPlayer currentPlayer)
 	{
-		sendToAll(mt, currentPlayer, false);
+		sendToAll(type, currentPlayer, false);
 	}
 	
-	public synchronized void sendToAll(MsgType mt, ServerPlayer currentPlayer, boolean allButSelf)
+	public synchronized void sendToAll(byte type, ServerPlayer currentPlayer, boolean allButSelf)
 	{
 		for (ServerPlayer player : players)
 		{
 			if (player == null || (allButSelf && player == currentPlayer))
 				continue;
 			
-			sendTo(mt, player, currentPlayer);
+			sendTo(type, player, currentPlayer);
 		}
 	}
 	
-	public void sendTo(MsgType mt, ServerPlayer player, ServerPlayer currentPlayer)
+	public void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
 	{
-		switch (mt)
+		switch (type)
 		{
 		case NEW_PLAYER:
 			player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
@@ -122,6 +114,7 @@ public class ServerWorld
 			player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
 			break;
 		case UPDATE_POS:
+			//TODO UPD_CMD_POSITION
 			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		case SHOOT:

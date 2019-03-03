@@ -111,7 +111,7 @@ public class ClientProxy
 	{
 		byte[] data = new byte[4 + 1 + 4 + 4 + 4];
 		data = appendInt(data, 0, ID);
-		data[4] = 0;
+		data[4] = UDP_CMD_POSITION;
 		data = appendInt(data, 5, x);
 		data = appendInt(data, 9, y);
 		data = appendInt(data, 13, rot);

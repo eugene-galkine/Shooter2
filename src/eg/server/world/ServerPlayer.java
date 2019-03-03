@@ -8,8 +8,7 @@ import java.net.Socket;
 
 import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
-import eg.server.net.UDPServer;
-import eg.server.world.ServerWorld.MsgType;
+import eg.utils.GlobalConstants;
 import static eg.utils.GlobalConstants.*;
 import static eg.utils.ByteArrayUtils.*;
 
@@ -33,7 +32,7 @@ public class ServerPlayer
 	{
 		this.socket = inSocket;
 		this.id = inID;
-		this.sendData = new byte[UDPServer.PACKET_SIZE];
+		this.sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		//this.lastUpdated = System.currentTimeMillis();
 		this.x = 348;//TODO spawn
 		this.y = 348;
@@ -140,7 +139,7 @@ public class ServerPlayer
 		rot = inRot;
 		
 		//tell everyone else about our new pos
-		Server.getWorld().sendToAll(MsgType.UPDATE_POS, this, true);
+		Server.getWorld().sendToAll(UDP_CMD_POSITION, this, true);
 	}
 	
 	private void shootBullet(byte[] data, int index) 
@@ -152,7 +151,7 @@ public class ServerPlayer
 		index += 4;
 		fRot = parseFloat(data, index);
 		
-		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
+		Server.getWorld().sendToAll(TCP_CMD_SHOOT, this, true);
 	}
 	
 	private void throwGernade(byte[] data, int index)
@@ -163,7 +162,7 @@ public class ServerPlayer
 		index += 4;
 		fRot = parseFloat(data, index);
 		
-		Server.getWorld().sendToAll(MsgType.THROW_GERNADE, this, false);
+		Server.getWorld().sendToAll(TCP_CMD_GRENADE, this, false);
 	}
 	
 	private void hitBullet(byte[] data, int index) 
@@ -218,7 +217,7 @@ public class ServerPlayer
 		dead = false;
 		x = 100;
 		y = 100;
-		Server.getWorld().sendToAll(MsgType.SPAWN, this);
+		Server.getWorld().sendToAll(TCP_CMD_SPAWN, this);
 	}
 	
 	/*
@@ -236,14 +235,12 @@ public class ServerPlayer
 		}
 	}
 
-	void sendUDPMessage(String msg)
+	void sendUDPMessage(byte[] data)
 	{
 		//send a message over udp
 	    try 
 	    {
-	    	sendData = null;
-	    	sendData = msg.getBytes();
-	    	udpPacket.setData(sendData);//TODO move to UDPConnection
+	    	udpPacket.setData(data);//TODO move to UDPConnection
 			clientSocket.send(udpPacket);
 		} catch (IOException e) 
 	    {
@@ -282,7 +279,7 @@ public class ServerPlayer
 		try
 		{
 			switch (data[index++]) {
-			case 0://update position
+			case UDP_CMD_POSITION://update position
 				updatePlayerPos(data, index);
 				break;
 			}

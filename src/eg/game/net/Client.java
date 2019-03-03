@@ -9,10 +9,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import eg.utils.GlobalConstants;
+
 public class Client implements Runnable
 {
-	private static final int PACKET_SIZE = 24;
-	
 	private Socket socket;
 	private OutputStream outToServer;
 	private byte[] sendData;
@@ -27,8 +27,8 @@ public class Client implements Runnable
     //cannot access outside of package
 	Client (String ip, int port)
 	{
-		sendData = new byte[PACKET_SIZE];
-    	receiveData = new byte[PACKET_SIZE];
+		sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
+    	receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
     	clientProxy = new ClientProxy(this);
     	this.ip = ip;
     	this.port = port;

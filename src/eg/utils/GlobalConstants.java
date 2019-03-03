@@ -1,6 +1,10 @@
 package eg.utils;
 
 public class GlobalConstants {
+	public static final int UDP_PACKET_SIZE = 24;
+	
+	public static final byte UDP_CMD_POSITION = -1;
+	
 	public static final byte TCP_CMD_SHOOT = 0;
 	public static final byte TCP_CMD_GRENADE = 1;
 	public static final byte TCP_CMD_NEW_PLAYER = 2;
