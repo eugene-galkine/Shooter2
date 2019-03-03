@@ -134,17 +134,44 @@ public class ServerWorld
 			//player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
 		case TCP_CMD_SHOOT:
-			
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			data[0] = TCP_CMD_SHOOT;
+			data = appendInt(data, 1, currentPlayer.getID());
+			data = appendFloat(data, 5, currentPlayer.getfX());
+			data = appendFloat(data, 9, currentPlayer.getfY());
+			data = appendFloat(data, 13, currentPlayer.getfRot());
+			player.sendTCPMessage(data);
 			//player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		case TCP_CMD_SPAWN:
-//			if (player != currentPlayer)
+			if (player != currentPlayer) {
+				data = new byte[1 + 4 + 4 + 4 + 4];
+				data[0] = UDP_CMD_POSITION;
+				data = appendInt(data, 1, currentPlayer.getID());
+				data = appendInt(data, 5, currentPlayer.getX());
+				data = appendInt(data, 9, currentPlayer.getY());
+				data = appendInt(data, 13, currentPlayer.getRot());
+				player.sendUDPMessage(data);
 //				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
-//			else
+			} else {
+				data = new byte[1 + 4 + 4 + 4];
+				data[0] = TCP_CMD_SPAWN;
+				data = appendInt(data, 1, currentPlayer.getX());
+				data = appendInt(data, 5, currentPlayer.getY());
+				data = appendInt(data, 9, currentPlayer.getHealth());
+				player.sendTCPMessage(data);
 //				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
+			}
 			
 			break;
 		case TCP_CMD_GRENADE:
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			data[0] = TCP_CMD_GRENADE;
+			data = appendInt(data, 1, currentPlayer.getID());
+			data = appendFloat(data, 5, currentPlayer.getfX());
+			data = appendFloat(data, 9, currentPlayer.getfY());
+			data = appendFloat(data, 13, currentPlayer.getfRot());
+			player.sendTCPMessage(data);
 //			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		}
