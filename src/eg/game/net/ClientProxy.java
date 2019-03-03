@@ -51,7 +51,7 @@ public class ClientProxy
 			position += 4;
 			rot = parseFloat(msg, position);
 			
-			GameWorld.getInstance().throwGernade(id, x, y, rot);
+			GameWorld.getInstance().throwGrenade(id, x, y, rot);
 			break;
 		case TCP_CMD_NEW_PLAYER://new player
 			GameWorld.getInstance().newPlayer(parseInt(msg, position));
@@ -132,7 +132,7 @@ public class ClientProxy
 		//client.sendTCPMessage("SHOOT|"+x+","+y+","+rot+",");
 	}
 
-	public void throwGernade(float x, float y, float dir)
+	public void throwGrenade(float x, float y, float dir)
 	{
 		byte[] data = new byte[1 + 4 + 4 + 4];
 		data[0] = TCP_CMD_GRENADE;

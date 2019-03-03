@@ -9,7 +9,7 @@ import eg.game.world.objects.interfaces.IUpdatable;
 import eg.game.world.objects.particleSystem.ParticleEmitterFactory;
 import eg.game.world.objects.player.Player;
 
-public class Gernade extends IUpdatable implements IDrawable
+public class Grenade extends IUpdatable implements IDrawable
 {
 	private static final float speed = 30;
 	private static final float imgSize = 16;
@@ -27,7 +27,7 @@ public class Gernade extends IUpdatable implements IDrawable
 	private final Rectangle rect;
 	private final int ownerID;
 	
-	public Gernade (float x, float y, float dir, int id)
+	public Grenade(float x, float y, float dir, int id)
 	{
 		this.x = x - (imgSize/2);
 		this.y = y - (imgSize/2);

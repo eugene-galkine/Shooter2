@@ -103,11 +103,11 @@ public class Player extends Person implements EventHandler<Event>
 					changed = true;
 				
 				movUp = pressed;
-			} else if (key.getCode() == Control.Gernade.getCode())
+			} else if (key.getCode() == Control.Grenade.getCode())
 			{
 				if (throwReleased)
 				{
-					GameWorld.getClient().throwGernade(x,y,getRot());
+					GameWorld.getClient().throwGrenade(x,y,getRot());
 					throwReleased = false;
 				}
 				else if (!pressed)

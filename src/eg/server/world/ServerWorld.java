@@ -171,7 +171,7 @@ public class ServerWorld
 			appendFloat(data, 9, currentPlayer.getfY());
 			appendFloat(data, 13, currentPlayer.getfRot());
 			player.sendTCPMessage(data);
-//			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
+//			player.sendTCPMessage("GRENADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		}
 	}

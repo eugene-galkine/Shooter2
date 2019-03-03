@@ -30,7 +30,7 @@ class TCPClient extends Thread {
         try {
             inFromServer = socket.getInputStream();
 
-            //loop to reciece tcp messages
+            //loop to receive tcp messages
             byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
             while (!socket.isClosed() && inFromServer.read(data) != -1)
                 client.onNewTCPMessage(data);

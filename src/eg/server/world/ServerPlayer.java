@@ -25,7 +25,7 @@ public class ServerPlayer
 	private volatile boolean dead;
 	private final Object lockObj;
 	
-	public ServerPlayer(TCPConnection tcpConnection, UDPConnection udpConnection, int inID)
+	ServerPlayer(TCPConnection tcpConnection, UDPConnection udpConnection, int inID)
 	{
 		this.tcpConnection = tcpConnection;
 		this.udpConnection = udpConnection;
@@ -54,7 +54,7 @@ public class ServerPlayer
 	 * query functions
 	 */
 	
-	public int getID()
+	int getID()
 	{
 		return id;
 	}
@@ -74,17 +74,17 @@ public class ServerPlayer
 		return rot;
 	}
 
-	public float getfX()
+	float getfX()
 	{
 		return fx;
 	}
 	
-	public float getfY()
+	float getfY()
 	{
 		return fy;
 	}
 	
-	public float getfRot() 
+	float getfRot()
 	{
 		return fRot;
 	}
@@ -94,7 +94,7 @@ public class ServerPlayer
 		return weaponID;
 	}
 	
-	public int getHealth() 
+	int getHealth()
 	{
 		return health;
 	}
@@ -141,7 +141,7 @@ public class ServerPlayer
 		Server.getWorld().sendToAll(TCP_CMD_SHOOT, this, true);
 	}
 	
-	private void throwGernade(byte[] data, int index)
+	private void throwGrenade(byte[] data, int index)
 	{
 		fx = parseFloat(data, index);
 		index += 4;
@@ -209,7 +209,7 @@ public class ServerPlayer
 	 * network functions
 	 */
 	
-	public void sendTCPMessage(byte[] data) {
+	void sendTCPMessage(byte[] data) {
 		tcpConnection.sendPacket(data);
 	}
 
@@ -227,7 +227,7 @@ public class ServerPlayer
 				shootBullet(data, index);
 				break;
 			case TCP_CMD_GRENADE:
-				throwGernade(data, index);
+				throwGrenade(data, index);
 				break;
 			case TCP_CMD_HIT:
 				hitBullet(data, index);
@@ -244,7 +244,7 @@ public class ServerPlayer
 		}
 	}
 	
-	public void receiveUDPMessage(byte[] data, int index) {
+	void receiveUDPMessage(byte[] data, int index) {
 		try
 		{
 			switch (data[index++]) {
@@ -260,7 +260,7 @@ public class ServerPlayer
 		}
 	}
 	
-	public void close() 
+	void close()
 	{
 		try
 		{
