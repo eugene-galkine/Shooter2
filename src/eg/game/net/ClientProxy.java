@@ -134,7 +134,7 @@ public class ClientProxy
 
 	public void throwGernade(float x, float y, float dir)
 	{
-		byte[] data = new byte[1];
+		byte[] data = new byte[1 + 4 + 4 + 4];
 		data[0] = TCP_CMD_GRENADE;
 		data = appendFloat(data, 1, x);
 		data = appendFloat(data, 5, y);
