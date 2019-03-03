@@ -125,8 +125,8 @@ public class ServerWorld
 			break;
 		case UDP_CMD_POSITION:
 			data = new byte[1 + 4 + 4 + 4 + 4];
-			data[0] = UDP_CMD_POSITION;
-			data = appendInt(data, 1, currentPlayer.getID());
+			data = appendInt(data, 0, currentPlayer.getID());
+			data[4] = UDP_CMD_POSITION;
 			data = appendInt(data, 5, currentPlayer.getX());
 			data = appendInt(data, 9, currentPlayer.getY());
 			data = appendInt(data, 13, currentPlayer.getRot());
@@ -146,8 +146,8 @@ public class ServerWorld
 		case TCP_CMD_SPAWN:
 			if (player != currentPlayer) {
 				data = new byte[1 + 4 + 4 + 4 + 4];
-				data[0] = UDP_CMD_POSITION;
-				data = appendInt(data, 1, currentPlayer.getID());
+				data = appendInt(data, 0, currentPlayer.getID());
+				data[4] = UDP_CMD_POSITION;
 				data = appendInt(data, 5, currentPlayer.getX());
 				data = appendInt(data, 9, currentPlayer.getY());
 				data = appendInt(data, 13, currentPlayer.getRot());

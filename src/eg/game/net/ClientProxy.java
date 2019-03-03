@@ -25,7 +25,7 @@ public class ClientProxy
 	void receivedTCPMessage(byte[] msg, int length)//TODO use length
 	{
 		//a new message was received over tcp
-		//System.out.println("message from server tcp: " + msg);
+		System.out.println("message from server tcp: " + msg[0]);
 		
 		int position = 1;
 		int id, iX, iY;
@@ -87,15 +87,15 @@ public class ClientProxy
 	void receivedUDPMessage(byte[] msg, int length)
 	{
 		//a new message was received over udp
-		//System.out.println("message from server udp: " + msg);
+//		System.out.println("message from server udp: " + msg[0]);
 		
-		int position = 1;
-		int id, x, y, rot;
-		switch(msg[0]) {
-		case 0:
+		int position = 0;
+		int id = parseInt(msg, position);
+		position += 4;
+		int x, y, rot;
+		switch(msg[position++]) {
+		case UDP_CMD_POSITION:
 			//update position
-			id = parseInt(msg, position);
-			position += 4;
 			x = parseInt(msg, position);
 			position += 4;
 			y = parseInt(msg, position);
