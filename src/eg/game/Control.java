@@ -12,9 +12,9 @@ public class Control
 	public static final Control Gernade = new Control(KeyCode.G);
 	public static final Control Reload = new Control(KeyCode.R);
 	
-	private KeyCode ourCode;
+	private final KeyCode ourCode;
 	
-	public Control (KeyCode code)
+	private Control(KeyCode code)
 	{
 		ourCode = code;
 	}

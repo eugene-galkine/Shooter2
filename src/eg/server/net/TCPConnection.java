@@ -1,14 +1,19 @@
 package eg.server.net;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import static eg.utils.GlobalConstants.TCP_PACKET_SIZE;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import eg.server.world.ServerPlayer;
+import eg.utils.GlobalConstants;
 
 public class TCPConnection extends Thread
 {
-	private Socket socket;
+	private final Socket socket;
+	private OutputStream outputStream;
 	
 	public TCPConnection (Socket s)
 	{
@@ -23,8 +28,9 @@ public class TCPConnection extends Thread
 		
 		try
 		{
-			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			sp = Server.getWorld().addPlayer(socket);
+			InputStream inFromClient = socket.getInputStream();
+			outputStream = socket.getOutputStream();//TODO maybe make a factory instead of doing this ... ?
+			sp = Server.getWorld().addPlayer(this, new UDPConnection(socket.getInetAddress(), socket.getPort()));
 			
 			if (sp == null)
 			{
@@ -33,17 +39,36 @@ public class TCPConnection extends Thread
 				return;
 			}
 			
-			String in;
-			while (!socket.isClosed() && (in = inFromClient.readLine()) != null)
-				sp.receiveTCPMessage(in);
+			byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
+			int len;
+			while (!socket.isClosed() && (len = inFromClient.read(data)) != -1)
+				sp.receiveTCPMessage(data, len);
 			
 			inFromClient.close();
 			//obj.close();
 		} catch (Exception e) 
 		{
 			Server.getWorld().removePlayer(sp);
-			
-			return;
 		}
+	}
+	
+	public void sendPacket(byte[] data) 
+	{
+		try 
+		{
+			byte[] buffer = new byte[TCP_PACKET_SIZE];
+	    	for (int i = 0; i < data.length && i < buffer.length; i++)
+	    		buffer[i] = data[i];
+			outputStream.write(buffer);//TODO move to TCPConnection
+			outputStream.flush();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void close() throws IOException {
+		outputStream.close();
+		socket.close();
 	}
 }

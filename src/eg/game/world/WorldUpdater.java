@@ -2,7 +2,7 @@ package eg.game.world;
 
 import eg.game.world.objects.interfaces.IUpdatable;
 
-public class WorldUpdater implements Runnable
+class WorldUpdater implements Runnable
 {
 	//using a classic linked list instead of java container one because we can avoid concurrent errors this way
 	private IUpdatable listHead;
@@ -35,12 +35,12 @@ public class WorldUpdater implements Runnable
 			//middle of list
 			obj.prev.next = obj.next;
 			obj.next.prev = obj.prev;
-		} else if (listHead != obj && listTail == obj)
+		} else if (listHead != obj)
 		{
 			//the end of the list
 			obj.prev.next = null;
 			listTail = obj.prev;
-		} else if (listHead == obj && listTail != obj)
+		} else if (listTail != obj)
 		{
 			//the start of the list
 			listHead = obj.next;

@@ -1,25 +1,18 @@
 package eg.server.world;
 
-import java.net.DatagramPacket;
-import java.net.Socket;
+import eg.server.net.TCPConnection;
+import eg.server.net.UDPConnection;
+import eg.utils.ByteArrayUtils;
+import static eg.utils.GlobalConstants.*;
+import static eg.utils.ByteArrayUtils.*;
 
 public class ServerWorld 
 {
 	private static final int MAX_PLAYERS = 8;
 	
-	private ServerPlayer[] players;
-	private boolean[] playerIDs;
+	private final ServerPlayer[] players;
+	private final boolean[] playerIDs;
 	private int numPlayers;
-	
-	enum MsgType
-	{
-		NEW_PLAYER, //0
-		REMOVE_PLAYER, //1
-		UPDATE_POS, //2
-		SHOOT, //3
-		SPAWN,  //4
-		THROW_GERNADE
-	}
 	
 	public ServerWorld()
 	{
@@ -60,18 +53,18 @@ public class ServerWorld
 		numPlayers--;
 		
 		//tell everyone else about it
-		sendToAll(MsgType.REMOVE_PLAYER, sp);
+		sendToAll(TCP_CMD_REMOVE_PLAYER, sp);
 	}
 	
-	public synchronized ServerPlayer addPlayer(Socket socket)
+	public synchronized ServerPlayer addPlayer(TCPConnection tcp, UDPConnection udp)
 	{
 		if (numPlayers < MAX_PLAYERS)
 		{
-			ServerPlayer sp = new ServerPlayer(socket, getNextID());
-			System.out.println("new player connected: " + socket.getLocalAddress() + " and was given id: " + sp.getID());
+			ServerPlayer sp = new ServerPlayer(tcp, udp, getNextID());
+			System.out.println("new player connected and was given id: " + sp.getID());
 			
 			//tell everyone someone has joined
-			sendToAll(MsgType.NEW_PLAYER, sp, true);
+			sendToAll(TCP_CMD_NEW_PLAYER, sp, true);
 			
 			//add player to list
 			players[sp.getID()] = sp;
@@ -81,83 +74,121 @@ public class ServerWorld
 			//send data about all players to new player
 			for (ServerPlayer player : players)
 				if (player != null && sp != player)
-					sendTo(MsgType.NEW_PLAYER, sp, player);
+					sendTo(TCP_CMD_NEW_PLAYER, sp, player);
 			
 			numPlayers++;
 			
 			return sp;
 		} else
 		{
-			new ServerPlayer(socket, -1).close();
+			new ServerPlayer(tcp, udp, -1).close();
 			
 			return null;
 		}
 	}
 	
-	public void sendToAll(MsgType mt, ServerPlayer currentPlayer)
+	public void sendToAll(byte type, ServerPlayer currentPlayer)
 	{
-		sendToAll(mt, currentPlayer, false);
+		sendToAll(type, currentPlayer, false);
 	}
 	
-	public synchronized void sendToAll(MsgType mt, ServerPlayer currentPlayer, boolean allButSelf)
+	public synchronized void sendToAll(byte type, ServerPlayer currentPlayer, boolean allButSelf)
 	{
 		for (ServerPlayer player : players)
 		{
 			if (player == null || (allButSelf && player == currentPlayer))
 				continue;
 			
-			sendTo(mt, player, currentPlayer);
+			sendTo(type, player, currentPlayer);
 		}
 	}
 	
-	public void sendTo(MsgType mt, ServerPlayer player, ServerPlayer currentPlayer)
+	private void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
 	{
-		switch (mt)
+		byte[] data;
+		switch (type)
 		{
-		case NEW_PLAYER:
-			player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
+		case TCP_CMD_NEW_PLAYER:
+			data = new byte[5];
+			data[0] = TCP_CMD_NEW_PLAYER;
+			appendInt(data, 1, currentPlayer.getID());
+			player.sendTCPMessage(data);
+			//player.sendTCPMessage("NEW_PLAYER|"+currentPlayer.getID());
 			break;
-		case REMOVE_PLAYER:
-			player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
+		case TCP_CMD_REMOVE_PLAYER:
+			data = new byte[5];
+			data[0] = TCP_CMD_REMOVE_PLAYER;
+			appendInt(data, 1, currentPlayer.getID());
+			player.sendTCPMessage(data);
+			//player.sendTCPMessage("REMOVE_PLAYER|"+currentPlayer.getID());
 			break;
-		case UPDATE_POS:
-			player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+		case UDP_CMD_POSITION:
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			appendInt(data, 0, currentPlayer.getID());
+			data[4] = UDP_CMD_POSITION;
+			appendInt(data, 5, currentPlayer.getX());
+			appendInt(data, 9, currentPlayer.getY());
+			appendInt(data, 13, currentPlayer.getRot());
+			player.sendUDPMessage(data);
+			//player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
 			break;
-		case SHOOT:
-			player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
+		case TCP_CMD_SHOOT:
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			data[0] = TCP_CMD_SHOOT;
+			appendInt(data, 1, currentPlayer.getID());
+			appendFloat(data, 5, currentPlayer.getfX());
+			appendFloat(data, 9, currentPlayer.getfY());
+			appendFloat(data, 13, currentPlayer.getfRot());
+			player.sendTCPMessage(data);
+			//player.sendTCPMessage("SHOOT|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
-		case SPAWN:
-			if (player != currentPlayer)
-				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
-			else
-				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
+		case TCP_CMD_SPAWN:
+			if (player != currentPlayer) {
+				data = new byte[1 + 4 + 4 + 4 + 4];
+				appendInt(data, 0, currentPlayer.getID());
+				data[4] = UDP_CMD_POSITION;
+				appendInt(data, 5, currentPlayer.getX());
+				appendInt(data, 9, currentPlayer.getY());
+				appendInt(data, 13, currentPlayer.getRot());
+				player.sendUDPMessage(data);
+//				player.sendUDPMessage("UPD|"+currentPlayer.getID()+","+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getRot()+",");
+			} else {
+				data = new byte[1 + 4 + 4 + 4];
+				data[0] = TCP_CMD_SPAWN;
+				appendInt(data, 1, currentPlayer.getX());
+				appendInt(data, 5, currentPlayer.getY());
+				appendInt(data, 9, currentPlayer.getHealth());
+				player.sendTCPMessage(data);
+//				player.sendTCPMessage("SPAWN|"+currentPlayer.getX()+","+currentPlayer.getY()+","+currentPlayer.getHealth()+",");
+			}
 			
 			break;
-		case THROW_GERNADE:
-			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
+		case TCP_CMD_GRENADE:
+			data = new byte[1 + 4 + 4 + 4 + 4];
+			data[0] = TCP_CMD_GRENADE;
+			appendInt(data, 1, currentPlayer.getID());
+			appendFloat(data, 5, currentPlayer.getfX());
+			appendFloat(data, 9, currentPlayer.getfY());
+			appendFloat(data, 13, currentPlayer.getfRot());
+			player.sendTCPMessage(data);
+//			player.sendTCPMessage("GERNADE|"+currentPlayer.getID()+","+currentPlayer.getfX()+","+currentPlayer.getfY()+","+currentPlayer.getfRot()+",");
 			break;
 		}
 	}
 	
-	public void receiveUDPMessage(DatagramPacket receivePacket) 
-	{
-		String msg = new String(receivePacket.getData()).trim();
-		//System.out.println("NEW UDP MSG: " + msg);
-		
+	public void receiveUDPMessage(byte[] data) {
 		//get player ID from message
-		int index = msg.indexOf('|') + 1;
+		int index = ByteArrayUtils.parseInt(data, 0);
 		ServerPlayer player = null;
-		try
-		{
-			//incase it's not a valid number
-			player = players[Integer.parseInt(msg.substring(index, index + 1))];
-		} catch (Exception e)
-		{
-			System.out.println("bad udp message: " + index);
+		try {
+			//in case it's not a valid number
+			player = players[index];
+		} catch (Exception e) {
+			System.out.println("invalid id in udp message: " + index);
 		}
 		
 		if (player != null)
 			//throw new NullPointerException();
-			player.receiveUDPMessage(msg);
+			player.receiveUDPMessage(data, 4);
 	}
 }

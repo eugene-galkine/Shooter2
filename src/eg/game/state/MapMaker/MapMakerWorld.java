@@ -11,13 +11,13 @@ public class MapMakerWorld extends World
 {
 	private static MapMakerWorld instance;
 	
-	private ArrayList<Object> list;
+	private final ArrayList<Object> list;
 	
 	public MapMakerWorld(GraphicsContext newgc) 
 	{
 		super(newgc);
 		instance = this;
-		list = new ArrayList<Object>();
+		list = new ArrayList<>();
 	}
 	
 	public static MapMakerWorld getInstance()

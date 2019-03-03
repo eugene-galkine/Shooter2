@@ -33,11 +33,21 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 {
 	private static final MouseButton scrollButton = MouseButton.SECONDARY;
 	private static final MouseButton editButton = MouseButton.PRIMARY;
-	private float x, y, scrolX, scrolY, mx, my, placemx, placemy, mapZoom, oldX, oldY, oldW, oldH;
+	private float x;
+	private float y;
+	private float scrolX;
+	private float scrolY;
+	private float placemx;
+	private float placemy;
+	private float mapZoom;
+	private float oldX;
+	private float oldY;
+	private float oldW;
+	private float oldH;
 	private Wall selectedWall;
 	private boolean move;
 	
-	public MapView()
+	MapView()
 	{
 		x = 0;
 		y = 0;
@@ -58,8 +68,8 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 		} else if (e instanceof MouseEvent)
 		{
 			MouseEvent mouse = (MouseEvent)e;
-			mx = -(int)mouse.getX();
-			my = Main.WINDOW_HEIGHT - (int)mouse.getY();
+			float mx = -(int) mouse.getX();
+			float my = Main.WINDOW_HEIGHT - (int) mouse.getY();
 			
 			switch (mouse.getEventType().getName())
 			{
@@ -102,7 +112,7 @@ public class MapView extends IUpdatable implements EventHandler<Event>
 						selectedWall.deselect();
 					
 					//place a wall if we pressed mb2
-					selectedWall = new Wall((float)((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1, 0);
+					selectedWall = new Wall(((x - mx) / mapZoom), (float)((y + mouse.getY()) / mapZoom), 1, 1, 0);
 					selectedWall.select();
 					
 					placemx = mx;

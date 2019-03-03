@@ -4,5 +4,5 @@ import javafx.geometry.Bounds;
 
 public interface ICollidable 
 {
-	public Bounds getBounds ();
+	Bounds getBounds ();
 }

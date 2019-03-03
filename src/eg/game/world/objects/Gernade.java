@@ -16,10 +16,16 @@ public class Gernade extends IUpdatable implements IDrawable
 	private static final float SLOWDOWNRATE = 0.04f;
 	private static final int MAX_DURATION = 20;
 	
-	private float x, y, mx, my, dir, timer, startTime;
-	private Image img;
-	private Rectangle rect;
-	private int ownerID;
+	private float x;
+	private float y;
+	private float mx;
+	private float my;
+	private float dir;
+	private float timer;
+	private final float startTime;
+	private final Image img;
+	private final Rectangle rect;
+	private final int ownerID;
 	
 	public Gernade (float x, float y, float dir, int id)
 	{
@@ -89,7 +95,7 @@ public class Gernade extends IUpdatable implements IDrawable
 		//check collision
 		ICollidable obj = GameWorld.getInstance().checkCollision(rect.getBoundsInParent());
 		//if we hit something (that has an x and y)
-		if (obj != null && obj instanceof IDrawable)
+		if (obj instanceof IDrawable)
 		{
 			IDrawable collider = (IDrawable) obj;
 			

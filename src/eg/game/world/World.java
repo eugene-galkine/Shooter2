@@ -13,13 +13,11 @@ import eg.game.world.objects.interfaces.IUpdatable;
 
 public abstract class World
 {	
-	private LinkedList<ICollidable> solidObjects;
-	private WorldUpdater updater;
-	protected WorldDrawer drawer;
+	private final LinkedList<ICollidable> solidObjects = new LinkedList<>();
+	private final WorldUpdater updater;
+	protected final WorldDrawer drawer;
 	
-	public World(GraphicsContext newgc)
-	{
-		solidObjects = new LinkedList<ICollidable>();
+	protected World(GraphicsContext newgc) {
 		updater = new WorldUpdater();
 		drawer = new WorldDrawer(newgc);
 		drawer.start();
@@ -58,7 +56,7 @@ public abstract class World
 		if (obj instanceof ICollidable)
 			synchronized (solidObjects)
 			{
-				solidObjects.remove((ICollidable)obj);
+				solidObjects.remove(obj);
 			}
 	}
 	
@@ -79,8 +77,7 @@ public abstract class World
 			AffineTransform at = new AffineTransform();
 			at.rotate(Math.toRadians(drawObj.getRot()), drawObj.getX() + drawObj.getWidth() / 2, drawObj.getY() + drawObj.getHeight() / 2);
 			Shape s = at.createTransformedShape(new Rectangle((int)drawObj.getX(), (int)drawObj.getY(), (int)drawObj.getWidth(), (int)drawObj.getHeight()));
-			if (s.intersects(new Rectangle((int)b.getMinX(), (int)b.getMinY(), (int)b.getWidth(), (int)b.getHeight())))
-				return true;
+			return s.intersects(new Rectangle((int) b.getMinX(), (int) b.getMinY(), (int) b.getWidth(), (int) b.getHeight()));
 		}
 		
 		return false;

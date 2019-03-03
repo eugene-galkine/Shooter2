@@ -44,7 +44,7 @@ public class MapFileLoader
 	public static ArrayList<Object> loadMap()
 	{
 		String path = "src/maps/testMap.dat";
-		ArrayList<Object> list = new ArrayList<Object>();
+		ArrayList<Object> list = new ArrayList<>();
 		
 		try
 		{

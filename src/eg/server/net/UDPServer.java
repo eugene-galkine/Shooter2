@@ -4,17 +4,16 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class UDPServer extends Thread
+import eg.utils.GlobalConstants;
+
+class UDPServer extends Thread
 {
-	public static final int PACKET_SIZE = 24;
-	
-	private DatagramPacket receivePacket;
-	private byte[] receiveData;
+	private final DatagramPacket receivePacket;
 	private DatagramSocket udpSocket;
 	
-	public UDPServer(int port) throws SocketException
+	UDPServer(int port) throws SocketException
 	{
-		receiveData = new byte[PACKET_SIZE];
+		byte[] receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		udpSocket = new DatagramSocket(port);
 		start();
@@ -33,7 +32,7 @@ public class UDPServer extends Thread
 			while (true)
 			{
 				udpSocket.receive(receivePacket);
-				Server.getWorld().receiveUDPMessage(receivePacket);
+				Server.getWorld().receiveUDPMessage(receivePacket.getData());
 			}
 		} catch (Exception e) 
 		{

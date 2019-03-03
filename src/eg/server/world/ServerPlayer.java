@@ -1,39 +1,37 @@
 package eg.server.world;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Socket;
-
 import eg.game.world.objects.player.Weapon;
 import eg.server.net.Server;
-import eg.server.net.UDPServer;
-import eg.server.world.ServerWorld.MsgType;
+import eg.server.net.TCPConnection;
+import eg.server.net.UDPConnection;
+import static eg.utils.GlobalConstants.*;
+import static eg.utils.ByteArrayUtils.*;
 
 public class ServerPlayer 
 {
 	//private static final float MOVE_SPEED = 25f;
 	
-	private Socket socket;
-	private int id;
-	private DataOutputStream outToClient;
-	private DatagramPacket udpPacket;
-	private byte[] sendData;
-	private DatagramSocket clientSocket;
+	private final TCPConnection tcpConnection;
+	private final UDPConnection udpConnection;
+	private final int id;
 	//private long lastUpdated;
-	private int x, y, rot, weaponID, health, killer;//TODO
-	private float fx, fy, fRot;
+	private int x;
+	private int y;
+	private int rot;
+	private final int weaponID;
+	private int health;
+	private int killer;//TODO
+	private float fx, fy, fRot;//TODO look into this
 	private volatile boolean dead;
-	private Object lockObj;
+	private final Object lockObj;
 	
-	public ServerPlayer(Socket inSocket, int inID)
+	public ServerPlayer(TCPConnection tcpConnection, UDPConnection udpConnection, int inID)
 	{
-		this.socket = inSocket;
+		this.tcpConnection = tcpConnection;
+		this.udpConnection = udpConnection;
 		this.id = inID;
-		this.sendData = new byte[UDPServer.PACKET_SIZE];
 		//this.lastUpdated = System.currentTimeMillis();
-		this.x = 348;
+		this.x = 348;//TODO spawn
 		this.y = 348;
 		this.rot = 0;
 		this.weaponID = 0;
@@ -42,19 +40,13 @@ public class ServerPlayer
 		this.dead = false;
 		this.lockObj = new Object();
 		
-		try 
-		{
-			outToClient = new DataOutputStream(socket.getOutputStream());
-			udpPacket = new DatagramPacket(sendData, sendData.length, socket.getInetAddress(), socket.getPort()+1);
-			clientSocket = new DatagramSocket();
-			
-			if (inID != -1)
-				sendTCPMessage("CONNECTED|"+id);
-			else
-				sendTCPMessage("REJECTED");
-		} catch (IOException e)
-		{
-			e.printStackTrace();
+		if (inID != -1) {
+			byte[] data = new byte[5];
+			data[0] = TCP_CMD_CONNECTED;
+			appendInt(data, 1, id);
+			sendTCPMessage(data);
+		} else {
+			sendTCPMessage(new byte[]{TCP_CMD_REJECTED});
 		}
 	}
 	
@@ -111,14 +103,14 @@ public class ServerPlayer
 	 * net event functions
 	 */
 	
-	private void updatePlayerPos(String substring) 
+	private void updatePlayerPos(byte[] data, int index) 
 	{
 		//parse the new position
-		int inX = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int inY = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int inRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
+		int inX = parseInt(data, index);
+		index += 4;
+		int inY = parseInt(data, index);
+		index += 4;
+		int inRot = parseInt(data, index);
 		
 		//find the delta and update last updated time
 		//float delta = (System.currentTimeMillis() - lastUpdated) / 100f;
@@ -134,38 +126,41 @@ public class ServerPlayer
 		rot = inRot;
 		
 		//tell everyone else about our new pos
-		Server.getWorld().sendToAll(MsgType.UPDATE_POS, this, true);
+		Server.getWorld().sendToAll(UDP_CMD_POSITION, this, true);
 	}
 	
-	private void shootBullet(String substring) 
+	private void shootBullet(byte[] data, int index) 
 	{
 		//shootRot = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		fx = parseFloat(data, index);
+		index += 4;
+		fy = parseFloat(data, index);
+		index += 4;
+		fRot = parseFloat(data, index);
 		
-		Server.getWorld().sendToAll(MsgType.SHOOT, this, true);
+		Server.getWorld().sendToAll(TCP_CMD_SHOOT, this, true);
 	}
 	
-	private void throwGernade(String substring)
+	private void throwGernade(byte[] data, int index)
 	{
-		fx = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fy = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		fRot = Float.parseFloat(substring.substring(0, substring.indexOf(',')));
+		fx = parseFloat(data, index);
+		index += 4;
+		fy = parseFloat(data, index);
+		index += 4;
+		fRot = parseFloat(data, index);
 		
-		Server.getWorld().sendToAll(MsgType.THROW_GERNADE, this, false);
+		Server.getWorld().sendToAll(TCP_CMD_GRENADE, this, false);
 	}
 	
-	private void hitBullet(String substring) 
+	private void hitBullet(byte[] data, int index) 
 	{
-		int bulletID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		substring = substring.substring(substring.indexOf(',') + 1);
-		int weaponID = Integer.parseInt(substring.substring(0, substring.indexOf(',')));
-		int damage = Weapon.getFromID(weaponID).getDamage();
+		int bulletID = parseInt(data, index);
+		index += 4;
+		int weaponID = parseInt(data, index);
+		Weapon weapon = Weapon.getFromID(weaponID);
+		int damage = 0;
+		if (weapon != null)
+			damage = weapon.getDamage();
 		
 		health -= damage;
 		if (health <= 0)
@@ -173,26 +168,21 @@ public class ServerPlayer
 			killer = bulletID;
 			
 			//wait until we are confirmed dead by client to respawn
-			new Thread(new Runnable() 
-			{
-				@Override
-				public void run() 
+			new Thread(() -> {
+				//TODO better anti cheat
+
+				while (!dead)
 				{
-					//TODO better anti cheat
-					
-					while (!dead)
+					try
 					{
-						try 
+						synchronized (lockObj)
 						{
-							synchronized (lockObj)
-							{
-								lockObj.wait();
-							}
-						} catch (InterruptedException e) {}
-					}
-					
-					respawn();
+							lockObj.wait();
+						}
+					} catch (InterruptedException ignore) {}
 				}
+
+				respawn();
 			}).start();
 		}
 	}
@@ -212,74 +202,60 @@ public class ServerPlayer
 		dead = false;
 		x = 100;
 		y = 100;
-		Server.getWorld().sendToAll(MsgType.SPAWN, this);
+		Server.getWorld().sendToAll(TCP_CMD_SPAWN, this);
 	}
 	
 	/*
 	 * network functions
 	 */
 	
-	void sendTCPMessage(String in) 
-	{
-		try 
-		{
-			outToClient.write((in+'\n').getBytes());
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	public void sendTCPMessage(byte[] data) {
+		tcpConnection.sendPacket(data);
 	}
 
-	void sendUDPMessage(String msg)
-	{
-		//send a message over udp
-	    try 
-	    {
-	    	sendData = null;
-	    	sendData = msg.getBytes();
-	    	udpPacket.setData(sendData);
-			clientSocket.send(udpPacket);
-		} catch (IOException e) 
-	    {
-			e.printStackTrace();
-		}
+	void sendUDPMessage(byte[] data){
+		udpConnection.setPacket(data);
 	}
 	
-	public void receiveTCPMessage(String in) 
+	public void receiveTCPMessage(byte[] data, int len) 
 	{
 		try
 		{
-			if (in.startsWith("HIT"))
-			{
-				hitBullet(in.substring(in.indexOf('|') + 1));
-			} else if (in.startsWith("DEAD"))
-			{
+			int index = 0;
+			switch(data[index++]) {
+			case TCP_CMD_SHOOT:
+				shootBullet(data, index);
+				break;
+			case TCP_CMD_GRENADE:
+				throwGernade(data, index);
+				break;
+			case TCP_CMD_HIT:
+				hitBullet(data, index);
+				break;
+			case TCP_CMD_DEAD:
 				die();
-			}  else if (in.startsWith("SHOOT"))
-			{
-				shootBullet(in.substring(in.indexOf('|') + 1));
-			} else if (in.startsWith("GERNADE"))
-			{
-				throwGernade(in.substring(in.indexOf('|') + 1));
+				break;
 			}
 		} catch (Exception e)
 		{
-			System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
+			//TODO print error
+			//System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
 	}
 	
-	public void receiveUDPMessage(String in) 
-	{
+	public void receiveUDPMessage(byte[] data, int index) {
 		try
 		{
-			if (in.startsWith("POS"))
-			{
-				updatePlayerPos(in.substring(in.indexOf('|') + 3));
+			switch (data[index++]) {
+			case UDP_CMD_POSITION://update position
+				updatePlayerPos(data, index);
+				break;
 			}
 		} catch (Exception e)
 		{
-			System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
+			//TODO print error 
+			//System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
 	}
@@ -288,9 +264,8 @@ public class ServerPlayer
 	{
 		try
 		{
-			outToClient.close();
-			clientSocket.close();
-			socket.close();
+			tcpConnection.close();
+			udpConnection.close();
 		} catch (Exception e)
 		{
 			e.printStackTrace();

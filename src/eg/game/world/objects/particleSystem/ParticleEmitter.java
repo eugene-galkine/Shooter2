@@ -8,13 +8,25 @@ import eg.game.world.objects.interfaces.IUpdatable;
 
 public class ParticleEmitter extends IUpdatable 
 {
-	private float emitDuration, minDuration, maxDuration, minDir, maxDir, minSpeed, maxSpeed, minSize, maxSize, x, y, dir;
-	private int minObjs, maxObjs;
-	private Image img[];
-	private Random r;
+	private float emitDuration;
+	private final float minDuration;
+	private final float maxDuration;
+	private final float minDir;
+	private final float maxDir;
+	private final float minSpeed;
+	private final float maxSpeed;
+	private final float minSize;
+	private final float maxSize;
+	private final float x;
+	private final float y;
+	private final float dir;
+	private final int minObjs;
+	private final int maxObjs;
+	private final Image[] img;
+	private final Random r;
 	
 	public ParticleEmitter (int minObjs, int maxObjs, float emitDuration, float minDuration, float maxDuration, float minDir, float maxDir,
-			float minSpeed, float maxSpeed, float minSize, float maxSize, float x, float y, float dir, Image img[])
+							float minSpeed, float maxSpeed, float minSize, float maxSize, float x, float y, float dir, Image[] img)
 	{
 		this.minObjs = minObjs;
 		this.maxObjs = maxObjs;
