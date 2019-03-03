@@ -3,9 +3,6 @@ package eg.game.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -15,20 +12,12 @@ public class Client implements Runnable
 {
 	private Socket socket;
 	private OutputStream outToServer;
-	private byte[] sendData;
-    private byte[] receiveData;
-    private DatagramSocket clientSocket;
-    private InetAddress ServerAddress;
-    private DatagramPacket sendPacket;
     private ClientProxy clientProxy;
     private String ip;
     private int port;
     
     //cannot access outside of package
-	Client (String ip, int port)
-	{
-		sendData = new byte[GlobalConstants.UDP_PACKET_SIZE];
-    	receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
+	Client (String ip, int port) {
     	clientProxy = new ClientProxy(this);
     	this.ip = ip;
     	this.port = port;
@@ -44,10 +33,7 @@ public class Client implements Runnable
 			outToServer = socket.getOutputStream();
 			
 			//UDP
-			clientSocket = new DatagramSocket(socket.getLocalPort() + 1);
-	    	ServerAddress = InetAddress.getByName(ip);
-		    sendPacket = new DatagramPacket(sendData, sendData.length, ServerAddress, port + 1);
-		    new Thread(new UDPRecieve()).start();
+		    new UDPClient(ip, port + 1);
 		} catch (UnknownHostException e) 
 		{
 			e.printStackTrace();
@@ -94,47 +80,6 @@ public class Client implements Runnable
 		} catch (IOException e) 
 		{
 			e.printStackTrace();
-		}
-	}
-	
-	//package wide access
-	void sendUDPMessage(byte[] msg)
-	{
-		//send a message over udp
-	    try 
-	    {
-	    	sendPacket.setData(msg);
-			clientSocket.send(sendPacket);
-		} catch (IOException e) 
-	    {
-			e.printStackTrace();
-		}
-	}
-	
-	private class UDPRecieve implements Runnable
-	{
-		private DatagramPacket receivePacket;
-		
-		public UDPRecieve() 
-		{
-			receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		}
-		
-		@Override
-		public void run() 
-		{
-			//loop to receive messages over udp
-			while (true)
-			{
-				try 
-				{
-					clientSocket.receive(receivePacket);
-					clientProxy.receivedUDPMessage(receivePacket.getData(), receivePacket.getLength());
-				} catch (IOException e) 
-				{
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
