@@ -1,15 +1,14 @@
 package eg.game.world;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.util.LinkedList;
-
-import javafx.geometry.Bounds;
-import javafx.scene.canvas.GraphicsContext;
 import eg.game.world.objects.interfaces.ICollidable;
 import eg.game.world.objects.interfaces.IDrawable;
 import eg.game.world.objects.interfaces.IUpdatable;
+import javafx.geometry.Bounds;
+import javafx.scene.canvas.GraphicsContext;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.util.LinkedList;
 
 public abstract class World
 {	
@@ -21,7 +20,7 @@ public abstract class World
 		updater = new WorldUpdater();
 		drawer = new WorldDrawer(newgc);
 		drawer.start();
-		new Thread(updater).start();
+		updater.start();
 	}
 	
 	public void addObject(Object obj)

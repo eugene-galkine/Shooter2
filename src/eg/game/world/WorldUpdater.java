@@ -2,7 +2,7 @@ package eg.game.world;
 
 import eg.game.world.objects.interfaces.IUpdatable;
 
-class WorldUpdater implements Runnable
+class WorldUpdater extends Thread
 {
 	//using a classic linked list instead of java container one because we can avoid concurrent errors this way
 	private IUpdatable listHead;
@@ -58,7 +58,7 @@ class WorldUpdater implements Runnable
 		long lastUpdate = System.currentTimeMillis();
 		
 		//run FOREVER!! (unless killed by System.exit(0) in Main)
-		while (true)
+		while (!Thread.currentThread().isInterrupted())
 		{	
 			//calculate delta time
 			float delta = (System.currentTimeMillis() - lastUpdate) / 100f;
