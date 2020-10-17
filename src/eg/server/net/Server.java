@@ -9,38 +9,22 @@ import eg.server.world.ServerWorld;
 public class Server implements Runnable
 {
 	private static final int PORT = 1426;
-	
 	private static ServerWorld sw;
-	
-	private ServerSocket serverSocket;	
-	
-	
-	public Server()
-	{
+
+	public Server() {
 	}
 
 	@Override
 	public void run() 
 	{
+		sw = new ServerWorld();
+
 		try {
-			serverSocket = new ServerSocket(PORT);
-			
+			TCPServer tcpServer =  new TCPServer(PORT);
 			UDPServer server = new UDPServer(PORT + 1);
-			System.out.println("Game Server started on port: " + serverSocket.getLocalPort() + " and: " + server.getLocalPort());
+			System.out.println("Game Server started on port: " + tcpServer.getLocalPort() + " and: " + server.getLocalPort());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		sw = new ServerWorld();
-		
-		while(true)
-		{
-			try
-			{
-				Socket connectionSocket = serverSocket.accept();
-				connectionSocket.setTcpNoDelay(true);
-				new TCPConnection(connectionSocket);
-		    } catch (Exception e) {e.printStackTrace();}
 		}
 	}
 	
