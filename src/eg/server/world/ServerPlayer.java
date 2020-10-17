@@ -230,15 +230,17 @@ public class ServerPlayer
 				throwGrenade(data, index);
 				break;
 			case TCP_CMD_HIT:
+				//TODO change to take damage and do for net players and local ... ????
 				hitBullet(data, index);
 				break;
 			case TCP_CMD_DEAD:
+				//TODO remove ... ??
 				die();
 				break;
 			}
 		} catch (Exception e)
 		{
-			//TODO print error
+			e.printStackTrace();
 			//System.out.println("TCP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}
@@ -254,7 +256,7 @@ public class ServerPlayer
 			}
 		} catch (Exception e)
 		{
-			//TODO print error 
+			e.printStackTrace();
 			//System.out.println("UDP messsage from client " + id + " caused error.\n msg: " + in);
 			//don't crash
 		}

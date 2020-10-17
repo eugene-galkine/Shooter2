@@ -38,7 +38,7 @@ public class Grenade extends IUpdatable implements IDrawable
 		this.timer = MAX_DURATION;
 		this.startTime = MAX_DURATION;
 		
-		img = new Image("images/bullets/gernade.png", imgSize, imgSize, true, true);
+		img = new Image("images/bullets/grenade.png", imgSize, imgSize, true, true);
 		
 		rect = new Rectangle(x, y, imgSize, imgSize);
 	}
@@ -73,8 +73,10 @@ public class Grenade extends IUpdatable implements IDrawable
 			//damage with explosion
 			Player p = GameWorld.getInstance().getPlayer();
 			int distance = (int)Math.sqrt(Math.pow(p.getX() - getX(), 2) + Math.pow(p.getY() - getY(), 2));
-			if (distance < 150)
+			if (distance < 150) {//TODO where should this go?
+				//getClient().bulletHit(getClient().getID(), ownerID, weaponID);
 				p.takeDamage(150 - distance);
+			}
 			//System.out.println();
 			return;
 		}
@@ -163,9 +165,7 @@ public class Grenade extends IUpdatable implements IDrawable
 					dir -= 45;
 					
 					float nspeed = speed - ((startTime - timer) * (startTime/2) * SLOWDOWNRATE);
-					
-					System.out.println("speed="+speed+" nspeed="+nspeed);
-					
+
 					this.mx = (float) (Math.sin(Math.toRadians(dir)) * nspeed);
 					this.my = (float) (Math.cos(Math.toRadians(dir)) * nspeed);
 					dir = (float) Math.toDegrees(Math.atan2(my, mx)) + 90;
