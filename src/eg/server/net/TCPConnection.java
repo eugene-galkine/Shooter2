@@ -10,65 +10,60 @@ import java.net.Socket;
 import eg.server.world.ServerPlayer;
 import eg.utils.GlobalConstants;
 
-public class TCPConnection extends Thread
-{
+public class TCPConnection extends Thread {
 	private final Socket socket;
 	private OutputStream outputStream;
+	private InputStream inFromClient;
 	
-	public TCPConnection (Socket s)
-	{
+	public TCPConnection (Socket s) {
 		socket = s;
 		start();
 	}
 	
 	@Override
-	public void run() 
-	{
+	public void run() {
 		ServerPlayer sp = null;
 		
-		try
-		{
-			InputStream inFromClient = socket.getInputStream();
+		try {
+			inFromClient = socket.getInputStream();
 			outputStream = socket.getOutputStream();//TODO maybe make a factory instead of doing this ... ?
 			sp = Server.getWorld().addPlayer(this, new UDPConnection(socket.getInetAddress(), socket.getPort()));
 			
 			if (sp == null)
-			{
-				//server was full
-				socket.close();
 				return;
-			}
 			
 			byte[] data = new byte[GlobalConstants.TCP_PACKET_SIZE];
 			int len;
 			while (!socket.isClosed() && (len = inFromClient.read(data)) != -1)
 				sp.receiveTCPMessage(data, len);
-			
-			inFromClient.close();
-			//obj.close();
-		} catch (Exception e) 
-		{
+		} catch (Exception e) {
 			Server.getWorld().removePlayer(sp);
+		} finally {
+			try {
+				close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public void sendPacket(byte[] data) 
-	{
-		try 
-		{
+	public void sendPacket(byte[] data) {
+		try {
 			byte[] buffer = new byte[TCP_PACKET_SIZE];
 	    	for (int i = 0; i < data.length && i < buffer.length; i++)
 	    		buffer[i] = data[i];
-			outputStream.write(buffer);//TODO move to TCPConnection
+			outputStream.write(buffer);
 			outputStream.flush();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void close() throws IOException {
-		outputStream.close();
+		if (outputStream != null)
+			outputStream.close();
+		if (inFromClient != null)
+			inFromClient.close();
 		socket.close();
 	}
 }
