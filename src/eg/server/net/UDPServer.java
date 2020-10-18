@@ -6,13 +6,11 @@ import java.net.SocketException;
 
 import eg.utils.GlobalConstants;
 
-class UDPServer extends Thread
-{
+class UDPServer extends Thread {
 	private final DatagramPacket receivePacket;
 	private DatagramSocket udpSocket;
 	
-	UDPServer(int port) throws SocketException
-	{
+	UDPServer(int port) throws SocketException {
 		byte[] receiveData = new byte[GlobalConstants.UDP_PACKET_SIZE];
 		receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		udpSocket = new DatagramSocket(port);
@@ -25,17 +23,13 @@ class UDPServer extends Thread
 	}
 	
 	@Override
-	public void run() 
-	{
-		try
-		{
-			while (true)
-			{
+	public void run() {
+		try {
+			while (!udpSocket.isClosed()) {
 				udpSocket.receive(receivePacket);
 				Server.getWorld().receiveUDPMessage(receivePacket.getData());
 			}
-		} catch (Exception e) 
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
