@@ -1,108 +1,74 @@
 package eg.server.world;
 
+import eg.server.interfaces.Synchronized;
 import eg.server.net.TCPConnection;
 import eg.server.net.UDPConnection;
 import eg.utils.ByteArrayUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static eg.utils.GlobalConstants.*;
 import static eg.utils.ByteArrayUtils.*;
 
-public class ServerWorld 
-{
+public class ServerWorld {
 	private static final int MAX_PLAYERS = 8;
 	
-	private final ServerPlayer[] players;
-	private final boolean[] playerIDs;
-	private int numPlayers;
-	
-	public ServerWorld()
-	{
-		players = new ServerPlayer[MAX_PLAYERS];
-		numPlayers = 0;
-		playerIDs = new boolean[MAX_PLAYERS];
-		
+	private final ServerPlayer[] players = new ServerPlayer[MAX_PLAYERS];
+	private final HashMap<Integer, Synchronized> worldObjects = new HashMap<>();
+
+	private int getNextID() {
 		for (int i = 0; i < MAX_PLAYERS; i++)
-			playerIDs[i] = true;
-	}
-	
-	private int getNextID()
-	{
-		for (int i = 0; i < MAX_PLAYERS; i++)
-			if (playerIDs[i])
-			{
-				playerIDs[i] = false;
+			if (players[i] == null)
 				return i;
-			}
 		
 		return -1;
 	}
 	
-	public synchronized void removePlayer(ServerPlayer sp) 
-	{
+	public synchronized void removePlayer(ServerPlayer sp) {
 		if (sp == null)
 			return;
 		
 		System.out.println("removing player with id: " + sp.getID());
-		
-		//free the id
-		playerIDs[sp.getID()] = true;
-		//remove from list
 		players[sp.getID()] = null;
-		//close net sockets
 		sp.close();
 		
-		numPlayers--;
-		
-		//tell everyone else about it
-		sendToAll(TCP_CMD_REMOVE_PLAYER, sp);
+		//TODO trigger deletion of the player object ---- sendToAll(TCP_CMD_REMOVE_PLAYER, sp);
 	}
 	
-	public synchronized ServerPlayer addPlayer(TCPConnection tcp, UDPConnection udp)
-	{
-		if (numPlayers < MAX_PLAYERS)
-		{
-			ServerPlayer sp = new ServerPlayer(tcp, udp, getNextID());
+	public synchronized ServerPlayer addPlayer(TCPConnection tcp, UDPConnection udp) {
+		ServerPlayer sp = new ServerPlayer(tcp, udp, getNextID());
+
+		if (sp.getID() != -1) {
 			System.out.println("new player connected and was given id: " + sp.getID());
+
+			//TODO trigger creation of the player object ---- sendToAll(TCP_CMD_NEW_PLAYER, sp, true);
 			
-			//tell everyone someone has joined
-			sendToAll(TCP_CMD_NEW_PLAYER, sp, true);
-			
-			//add player to list
 			players[sp.getID()] = sp;
 			
-			sp.respawn();
-			
-			//send data about all players to new player
-			for (ServerPlayer player : players)
-				if (player != null && sp != player)
-					sendTo(TCP_CMD_NEW_PLAYER, sp, player);
-			
-			numPlayers++;
-			
+			sp.respawn(); //TODO remove
+			sp.sync(worldObjects);//send data about all players to new player
 			return sp;
-		} else
-		{
-			new ServerPlayer(tcp, udp, -1).close();
-			
+		} else {
+			sp.close();
 			return null;
 		}
 	}
 	
-	public void sendToAll(byte type, ServerPlayer currentPlayer)
-	{
+	void sendToAll(byte type, ServerPlayer currentPlayer) {
 		sendToAll(type, currentPlayer, false);
 	}
 	
-	public synchronized void sendToAll(byte type, ServerPlayer currentPlayer, boolean allButSelf)
-	{
-		for (ServerPlayer player : players)
-		{
+	synchronized void sendToAll(byte type, ServerPlayer currentPlayer, boolean allButSelf) {
+		for (ServerPlayer player : players) {
 			if (player == null || (allButSelf && player == currentPlayer))
 				continue;
 			
 			sendTo(type, player, currentPlayer);
 		}
 	}
-	
+
+	//TODO remove this switch statement and used the synchronized interface instead
 	private void sendTo(byte type, ServerPlayer player, ServerPlayer currentPlayer)
 	{
 		byte[] data;
