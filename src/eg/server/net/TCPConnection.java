@@ -37,9 +37,10 @@ public class TCPConnection extends Thread {
 			while (!socket.isClosed() && (len = inFromClient.read(data)) != -1)
 				sp.receiveTCPMessage(data, len);
 		} catch (Exception e) {
-			Server.getWorld().removePlayer(sp);
+			e.printStackTrace();
 		} finally {
 			try {
+				Server.getWorld().removePlayer(sp);
 				close();
 			} catch (IOException e) {
 				e.printStackTrace();
